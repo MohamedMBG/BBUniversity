@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true"
+    android:isScrollContainer="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:paddingBottom="24dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginBottom="24dp">
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_note_add"
+                android:background="@drawable/circle_background_gold"
+                android:padding="10dp"
+                app:tint="@color/primary_dark"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ajouter une Note"
+                android:textSize="22sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/montserrat_bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enregistrez les notes d'un étudiant"
+                android:textSize="14sp"
+                android:textColor="@color/success_color"/>
+        </LinearLayout>
+
+        <!-- Card with Inputs -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            app:cardElevation="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="@color/card_background">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <!-- Student Info -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Informations de l'étudiant"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/montserrat_bold" />
+
+                <!-- Email -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Email de l'étudiant"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:startIconDrawable="@drawable/ic_email"
+                    app:startIconTint="@color/primary_medium"
+                    app:boxStrokeColor="@color/primary_medium"
+                    app:hintTextColor="@color/primary_medium">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etStudentEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:inputType="textEmailAddress"
+                        android:textColor="@color/text_primary" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Matière -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_marginTop="12dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Matière (ex: MATH_101)"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:startIconDrawable="@drawable/ic_book"
+                    app:startIconTint="@color/primary_medium"
+                    app:boxStrokeColor="@color/primary_medium"
+                    app:hintTextColor="@color/primary_medium">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etMatiere"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@color/text_primary" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="20dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Grades Info -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Notes d'évaluation"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Contrôle & Examen -->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:hint="Contrôle"
+                        app:hintTextColor="@color/accent_gold_dark"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        app:boxStrokeColor="@color/accent_gold_dark"
+                        app:startIconDrawable="@drawable/ic_quiz"
+                        app:startIconTint="@color/accent_gold_dark"
+                        app:helperText="Sur 20"
+                        app:helperTextTextColor="@color/text_secondary">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etControle"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:inputType="numberDecimal"
+                            android:maxLength="5"
+                            android:textColor="@color/text_primary" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:hint="Examen"
+                        app:hintTextColor="@color/accent_gold_dark"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        app:boxStrokeColor="@color/accent_gold_dark"
+                        app:startIconDrawable="@drawable/ic_assignment"
+                        app:startIconTint="@color/accent_gold_dark"
+                        app:helperText="Sur 20"
+                        app:helperTextTextColor="@color/text_secondary">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etExamen"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:inputType="numberDecimal"
+                            android:maxLength="5"
+                            android:textColor="@color/text_primary" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <!-- Participation -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_marginTop="12dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Participation"
+                    app:hintTextColor="@color/accent_gold_dark"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxStrokeColor="@color/accent_gold_dark"
+                    app:startIconDrawable="@drawable/ic_people"
+                    app:startIconTint="@color/accent_gold_dark"
+                    app:helperText="Sur 20"
+                    app:helperTextTextColor="@color/text_secondary">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etParticipation"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:inputType="numberDecimal"
+                        android:maxLength="5"
+                        android:textColor="@color/text_primary" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Grade Preview -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardBackgroundColor="@color/info_background"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/info_border">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_calculate"
+                            android:layout_marginEnd="8dp"
+                            app:tint="@color/info_color" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Moyenne calculée automatiquement"
+                            android:textSize="12sp"
+                            android:textColor="@color/info_color"/>
+
+                        <TextView
+                            android:id="@+id/tvPreviewGrade"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--/20"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/info_color"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Submit Buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="end"
+                    android:layout_marginTop="24dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAddNote"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Ajouter la Note"
+                        android:backgroundTint="@color/success_color"
+                        android:textColor="@android:color/white"
+                        app:icon="@drawable/ic_check"
+                        app:iconTint="@android:color/white"
+                        app:cornerRadius="12dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCancel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Annuler"
+                        android:layout_marginEnd="12dp"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        app:strokeColor="@color/error_color"
+                        android:textColor="@color/error_color"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</ScrollView>

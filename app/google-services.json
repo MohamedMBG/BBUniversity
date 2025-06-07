@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "784994655350",
+    "project_id": "bnb-university",
+    "storage_bucket": "bnb-university.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:784994655350:android:3c3afc7e1f683af2b49357",
+        "android_client_info": {
+          "package_name": "com.example.bbuniversity"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZMfiYsgupRMYyAV27YQNOh8OVoJECPoc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:784994655350:android:820147520ef58b96b49357",
+        "android_client_info": {
+          "package_name": "com.example.bnbuniversity"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZMfiYsgupRMYyAV27YQNOh8OVoJECPoc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
