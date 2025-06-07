@@ -87,6 +87,15 @@ public class ManageStudentsActivity extends AppCompatActivity implements Student
                                     data.put("matricule", String.valueOf(data.get("matricule")));
                                 }
 
+                                // Get codeClasse if exists, otherwise generate it from components
+                                String codeClasse = data.containsKey("codeClasse") ?
+                                        (String) data.get("codeClasse") :
+                                        generateCodeClasse(
+                                                ((Number) data.getOrDefault("niveau", 0)).intValue(),
+                                                (String) data.getOrDefault("filiere", ""),
+                                                (String) data.getOrDefault("classe", "")
+                                        );
+
                                 // Manually create Etudiant object
                                 Etudiant student = new Etudiant(
                                         doc.getId(),
@@ -96,7 +105,7 @@ public class ManageStudentsActivity extends AppCompatActivity implements Student
                                         (String) data.get("matricule"),  // Now ensured to be String
                                         ((Number) data.getOrDefault("niveau", 0)).intValue(),  // Handle Number -> int
                                         (String) data.get("filiere"),
-                                        (String) data.get("classeCode")
+                                        codeClasse  // Using codeClasse instead of classe
                                 );
 
                                 studentList.add(student);
@@ -109,6 +118,10 @@ public class ManageStudentsActivity extends AppCompatActivity implements Student
                         Toast.makeText(this, "Error loading students", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private String generateCodeClasse(int niveau, String filiere, String classe) {
+        return niveau + filiere + classe;
     }
 
     private void setupSearch() {

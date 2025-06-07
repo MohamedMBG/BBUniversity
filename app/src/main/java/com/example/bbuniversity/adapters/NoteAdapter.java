@@ -106,7 +106,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
             textParticipation = itemView.findViewById(R.id.textParticipation);
             textMoyenne = itemView.findViewById(R.id.textMoyenne);
             textDate = itemView.findViewById(R.id.textDate);
-            textEtudiant = itemView.findViewById(R.id.textEtudiant); // Add this to your layout
+            textEtudiant = itemView.findViewById(R.id.textEtudiant);
         }
     }
 }

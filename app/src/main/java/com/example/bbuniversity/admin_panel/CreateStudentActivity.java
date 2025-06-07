@@ -117,6 +117,9 @@ public class CreateStudentActivity extends AppCompatActivity {
             int matricule = Integer.parseInt(matriculeStr);
             int niveau = Integer.parseInt(niveauStr);
 
+            // Generate the codeClasse in the format "niveau + filiere + classe"
+            String codeClasse = niveauStr + filiere + classe;
+
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(authTask -> {
                         if (authTask.isSuccessful()) {
@@ -129,7 +132,7 @@ public class CreateStudentActivity extends AppCompatActivity {
                             mAuth.getCurrentUser().updateProfile(profileUpdates)
                                     .addOnCompleteListener(profileTask -> {
                                         if (profileTask.isSuccessful()) {
-                                            createFirestoreStudent(uid, email, nom, prenom, matricule, filiere, classe, niveau);
+                                            createFirestoreStudent(uid, email, nom, prenom, matricule, filiere, classe, niveau,codeClasse);
                                         } else {
                                             Toast.makeText(this,
                                                     "Erreur de mise à jour du profil: " + profileTask.getException(),
@@ -150,7 +153,7 @@ public class CreateStudentActivity extends AppCompatActivity {
     }
 
     private void createFirestoreStudent(String uid, String email, String nom, String prenom,
-                                        int matricule, String filiere, String classe, int niveau) {
+                                        int matricule, String filiere, String classe, int niveau,String codeClasse) {
         Map<String, Object> studentData = new HashMap<>();
         studentData.put("uid", uid);
         studentData.put("email", email);
@@ -159,6 +162,7 @@ public class CreateStudentActivity extends AppCompatActivity {
         studentData.put("matricule", matricule);
         studentData.put("filiere", filiere);
         studentData.put("classe", classe);
+        studentData.put("codeClasse", codeClasse);
         studentData.put("niveau", niveau);
         studentData.put("role", "student");
 
