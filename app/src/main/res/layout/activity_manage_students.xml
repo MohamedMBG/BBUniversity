@@ -6,24 +6,38 @@
     android:orientation="vertical"
     android:background="@color/white">
 
-    <!-- Search Bar -->
-    <com.google.android.material.textfield.TextInputLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/searchInput"
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_back"/>
+        <!-- Search Bar -->
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
+            android:layout_marginEnd="16dp"
             android:layout_height="wrap_content"
-            android:hint="Search students..."
-            android:imeOptions="actionSearch"
-            android:inputType="text"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/searchInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search students..."
+                android:imeOptions="actionSearch"
+                android:inputType="text"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
 
     <!-- Students List -->
     <androidx.recyclerview.widget.RecyclerView
@@ -32,16 +46,5 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingBottom="80dp"/>
-
-    <!-- Floating Action Button for Back -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_back"
-        app:backgroundTint="@color/primary_medium"
-        app:tint="@color/white"/>
 
 </LinearLayout>

@@ -9,15 +9,17 @@ public class Professeur extends User {
     private String adresse;
 
     // clé = nom de la matière, valeur = liste des classes concernées
-    private Map<String, List<String>> matieres;
+    private Map<String, List<String>> enseignement;
 
     public Professeur() {}
 
-    public Professeur(String uid, String nom, String prenom, String email, String role, String departement, String adresse, Map<String, List<String>> matieres) {
+    public Professeur(String uid, String nom, String prenom, String email, String role,
+                      String departement, String adresse,
+                      Map<String, List<String>> enseignement) {
         super(uid, nom, prenom, email, role);
         this.departement = departement;
         this.adresse = adresse;
-        this.matieres = matieres;
+        this.enseignement = enseignement;
     }
 
     public String getDepartement() {
@@ -36,11 +38,11 @@ public class Professeur extends User {
         this.adresse = adresse;
     }
 
-    public Map<String, List<String>> getMatieres() {
-        return matieres;
+    public Map<String, List<String>> getEnseignement() {
+        return enseignement;
     }
 
-    public void setMatieres(Map<String, List<String>> matieres) {
-        this.matieres = matieres;
+    public void setEnseignement(Map<String, List<String>> enseignement) {
+        this.enseignement = enseignement;
     }
 }

@@ -1,7 +1,12 @@
 package com.example.bbuniversity.admin_panel;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.bbuniversity.R;
@@ -24,7 +29,13 @@ public class EditStudentDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+
         setContentView(R.layout.activity_edit_student_details);
+
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        );
 
         db = FirebaseFirestore.getInstance();
         studentId = getIntent().getStringExtra("studentId");
@@ -39,6 +50,8 @@ public class EditStudentDetailsActivity extends AppCompatActivity {
         loadStudentData();
 
         btnSave.setOnClickListener(v -> saveStudentData());
+        @SuppressLint({"MissingInflatedId", "LocalSuppress"}) Button btnCancel = findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener( view -> finish());
     }
 
     private void initializeViews() {

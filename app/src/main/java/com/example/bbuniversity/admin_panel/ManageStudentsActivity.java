@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -31,7 +32,7 @@ public class ManageStudentsActivity extends AppCompatActivity implements Student
     private List<Etudiant> studentList = new ArrayList<>();
     private List<Etudiant> filteredList = new ArrayList<>();
     private TextInputEditText searchInput;
-    private FloatingActionButton fabBack;
+    private ImageView fabBack;
     private FirebaseFirestore db;
 
     @Override
@@ -60,7 +61,7 @@ public class ManageStudentsActivity extends AppCompatActivity implements Student
     private void initializeViews() {
         searchInput = findViewById(R.id.searchInput);
         recyclerView = findViewById(R.id.recyclerViewStudents);
-        fabBack = findViewById(R.id.fabBack);
+        fabBack = findViewById(R.id.btn_back);
         fabBack.setOnClickListener(v -> finish());
     }
 

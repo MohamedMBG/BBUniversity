@@ -67,7 +67,6 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <!-- Personal Info -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -99,7 +98,7 @@
                         android:textColor="@color/text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Name & First Name -->
+                <!-- Nom & Prénom -->
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -145,7 +144,7 @@
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
-                <!-- Password -->
+                <!-- Mot de passe -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_marginTop="12dp"
                     android:layout_width="match_parent"
@@ -168,8 +167,7 @@
                         android:textColor="@color/text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-
-                <!-- adresse -->
+                <!-- Adresse -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_marginTop="12dp"
                     android:layout_width="match_parent"
@@ -191,14 +189,14 @@
                         android:textColor="@color/text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Divider -->
+                <!-- Séparateur -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginVertical="20dp"
                     android:background="@color/divider_color" />
 
-                <!-- Academic Info -->
+                <!-- Informations académiques -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -209,58 +207,51 @@
                     android:fontFamily="@font/montserrat_bold"
                     android:layout_marginBottom="16dp" />
 
-                <!-- Matricule & Niveau -->
-                <LinearLayout
-                    android:orientation="horizontal"
+                <!-- Département -->
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:hint="Département"
+                    app:hintTextColor="@color/accent_gold_dark"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxStrokeColor="@color/accent_gold_dark">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        android:hint="Departement"
-                        app:hintTextColor="@color/accent_gold_dark"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        app:boxStrokeColor="@color/accent_gold_dark">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:id="@+id/etDepartement"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@color/text_primary" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:id="@+id/etDepartement"
-                            android:maxLines="1"
-                            android:singleLine="true"
-                            android:inputType="number"
-                            android:textColor="@color/text_primary" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-
-                </LinearLayout>
-
-
-                <!-- Classe Dropdown -->
+                <!-- Sélection matière -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_marginTop="12dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Classe"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    app:hintTextColor="@color/accent_gold_dark"
-                    app:startIconDrawable="@drawable/ic_people"
-                    app:startIconTint="@color/accent_gold_dark"
-                    app:boxStrokeColor="@color/accent_gold_dark">
+                    android:hint="Sélectionner une matière">
 
                     <AutoCompleteTextView
-                        android:id="@+id/classDropdown"
+                        android:id="@+id/autoMatiere"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
+                        android:layout_height="wrap_content"
                         android:inputType="none"
-                        android:textColor="@color/text_primary" />
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:clickable="true"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Submit Button -->
+                <!-- Associer les classes -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAssocierClasses"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:text="Associer des classes"
+                    android:layout_marginTop="8dp" />
 
+                <!-- Boutons -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCreateStudent"
                     android:layout_width="match_parent"
@@ -275,7 +266,6 @@
                     app:cornerRadius="12dp"
                     app:icon="@drawable/ic_student"
                     app:iconTint="@color/text_on_primary" />
-
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCancel"

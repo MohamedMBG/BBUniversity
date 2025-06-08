@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#FFFFFF"
+    android:elevation="2dp">
+
+    <!-- Nom complet -->
+    <TextView
+        android:id="@+id/tvFullName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nom Prénom"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="#000000" />
+
+    <!-- Email -->
+    <TextView
+        android:id="@+id/tvEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Email: example@gmail.com"
+        android:textColor="#444444"
+        android:layout_marginTop="4dp" />
+
+    <!-- Adresse -->
+    <TextView
+        android:id="@+id/tvAdresse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Adresse: Rabat"
+        android:textColor="#444444"
+        android:layout_marginTop="2dp" />
+
+    <!-- Département -->
+    <TextView
+        android:id="@+id/tvDepartement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Département: 55"
+        android:textColor="#444444"
+        android:layout_marginTop="2dp" />
+
+    <!-- Matières -->
+    <TextView
+        android:id="@+id/tvMatieres"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Matières :"
+        android:textColor="#444444"
+        android:layout_marginTop="4dp" />
+
+</LinearLayout>

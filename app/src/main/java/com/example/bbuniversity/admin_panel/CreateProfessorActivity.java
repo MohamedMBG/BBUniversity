@@ -1,177 +1,144 @@
 package com.example.bbuniversity.admin_panel;
 
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import com.example.bbuniversity.R;
-import com.example.bbuniversity.models.Professeur;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CreateProfessorActivity extends AppCompatActivity {
 
-    private TextInputEditText etEmail, etNom, etPrenom, etPassword, etAdresse, etDepartement;
-    private MaterialButton btnCreate, btnCancel;
-    AutoCompleteTextView classDropdown;
+    private EditText etNom, etPrenom, etEmail, etPassword, etAdresse, etDepartement;
+    private AutoCompleteTextView autoMatiere;
+    private Button btnAssocierClasses, btnCreateStudent, btnCancel;
 
-
-    private List<String> allClasses = new ArrayList<>();
-    private boolean[] selectedClasses;
-    private List<String> selectedClassList = new ArrayList<>();
-
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    private final Map<String, List<String>> enseignement = new HashMap<>();
+    private final String[] CLASSES = {"1AP1", "1AP2", "2AP1", "2AP2", "3IIR1", "3IIR2"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_create_professor);
 
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        );
+        initUI();
 
-        //initialization of firebase firestore and auth
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        btnAssocierClasses.setOnClickListener(v -> showClassDialog());
+        btnCreateStudent.setOnClickListener(v -> createProfessor());
+        btnCancel.setOnClickListener(v -> finish());
+    }
 
-        //connecting the ui elements
-        etEmail = findViewById(R.id.etEmail);
+    // Initialiser les composants de l'interface
+    private void initUI() {
         etNom = findViewById(R.id.etNom);
         etPrenom = findViewById(R.id.etPrenom);
+        etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         etAdresse = findViewById(R.id.etAdresse);
         etDepartement = findViewById(R.id.etDepartement);
-        classDropdown = findViewById(R.id.classDropdown);
+        autoMatiere = findViewById(R.id.autoMatiere);
 
+        // Ouvrir le menu déroulant au clic
+        autoMatiere.setOnClickListener(v -> autoMatiere.showDropDown());
 
-
-        fetchClasses();
-
-        //create and cancel buttons
-        btnCreate = findViewById(R.id.btnCreateStudent);
-        btnCancel = findViewById(R.id.btnCancel);
-
-        //calling the methods on actions
-        btnCreate.setOnClickListener(v -> createProfesseur());
-        btnCancel.setOnClickListener(v -> finish());
-
-    }
-
-    private void fetchClasses() {
-        db.collection("classes").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                allClasses.clear();
-                for (QueryDocumentSnapshot doc : task.getResult()) {
-                    String className = doc.getString("name");
-                    if (className != null) allClasses.add(className);
-                }
-
-                selectedClasses = new boolean[allClasses.size()];
-
-                classDropdown.setOnClickListener(view -> {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("Sélectionner les classes");
-
-                    builder.setMultiChoiceItems(allClasses.toArray(new String[0]), selectedClasses, (dialog, which, isChecked) -> {
-                        String selected = allClasses.get(which);
-                        if (isChecked && !selectedClassList.contains(selected)) {
-                            selectedClassList.add(selected);
-                        } else if (!isChecked) {
-                            selectedClassList.remove(selected);
-                        }
-                    });
-
-                    builder.setPositiveButton("OK", (dialog, which) -> {
-                        classDropdown.setText(TextUtils.join(", ", selectedClassList));
-                    });
-
-                    builder.setNegativeButton("Annuler", (dialog, which) -> dialog.dismiss());
-
-                    builder.show();
+        // Charger dynamiquement les matières depuis Firestore
+        FirebaseFirestore.getInstance().collection("matieres")
+                .get()
+                .addOnSuccessListener(query -> {
+                    List<String> matieresList = new ArrayList<>();
+                    for (DocumentSnapshot doc : query.getDocuments()) {
+                        String nom = doc.getString("nom");
+                        if (nom != null) matieresList.add(nom);
+                    }
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, matieresList);
+                    autoMatiere.setAdapter(adapter);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Erreur de chargement des matières", Toast.LENGTH_SHORT).show();
                 });
 
-            } else {
-                Toast.makeText(this, "Erreur lors du chargement des classes", Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnAssocierClasses = findViewById(R.id.btnAssocierClasses);
+        btnCreateStudent = findViewById(R.id.btnCreateStudent);
+        btnCancel = findViewById(R.id.btnCancel);
     }
 
+    // Dialog pour sélectionner les classes associées à une matière
+    private void showClassDialog() {
+        String selectedMatiere = autoMatiere.getText().toString().trim();
+        if (selectedMatiere.isEmpty()) {
+            Toast.makeText(this, "Sélectionnez une matière d'abord", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-    private void createProfesseur() {
-        //get the values from the edittexts in the ui
+        boolean[] selected = new boolean[CLASSES.length];
+        List<String> selectedClasses = new ArrayList<>();
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Sélectionner des classes")
+                .setMultiChoiceItems(CLASSES, selected, (dialog, which, isChecked) -> {
+                    if (isChecked) selectedClasses.add(CLASSES[which]);
+                    else selectedClasses.remove(CLASSES[which]);
+                })
+                .setPositiveButton("Valider", (dialog, which) -> {
+                    if (!selectedClasses.isEmpty())
+                        enseignement.put(selectedMatiere, new ArrayList<>(selectedClasses));
+                    Toast.makeText(this, "Classes associées à " + selectedMatiere, Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Annuler", null)
+                .show();
+    }
+
+    // Création du professeur dans Firestore
+    private void createProfessor() {
         String email = etEmail.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
         String nom = etNom.getText().toString().trim();
         String prenom = etPrenom.getText().toString().trim();
-        String password = etPassword.getText().toString().trim();
         String adresse = etAdresse.getText().toString().trim();
         String departement = etDepartement.getText().toString().trim();
-        if (selectedClassList.isEmpty()) {
-            Toast.makeText(this, "Veuillez sélectionner au moins une classe", Toast.LENGTH_SHORT).show();
+
+        if (email.isEmpty() || password.isEmpty() || nom.isEmpty() || prenom.isEmpty())
             return;
-        }
-        //checking if the fields are empty
-        if (email.isEmpty() || nom.isEmpty() || prenom.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Veuillez remplir tous les champs obligatoires", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
-        //la creation du compte d'utilisateur dans la phase d'atuhentification
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                        if (firebaseUser != null) {
-                            String uid = firebaseUser.getUid();
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                .addOnSuccessListener(authResult -> {
+                    FirebaseUser user = authResult.getUser();
+                    if (user != null) {
+                        user.updateProfile(new UserProfileChangeRequest.Builder()
+                                .setDisplayName(prenom + " " + nom).build());
 
-                            // Mise à jour du nom de profil
-                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                    .setDisplayName(nom + " " + prenom)
-                                    .build();
-                            firebaseUser.updateProfile(profileUpdates);
+                        Map<String, Object> profData = new HashMap<>();
+                        profData.put("uid", user.getUid());
+                        profData.put("nom", nom);
+                        profData.put("prenom", prenom);
+                        profData.put("email", email);
+                        profData.put("role", "professor");
+                        profData.put("adresse", adresse);
+                        profData.put("departement", departement);
+                        profData.put("enseignement", enseignement);
 
-                            // Préparer la structure matieres (exemple : "Math" → ["3IIR1"])
-                            Map<String, List<String>> matieres = new HashMap<>();
-                            matieres.put("À définir", selectedClassList);
-
-                            Professeur professeur = new Professeur(uid, nom, prenom, email, "professor", departement, adresse, matieres);
-
-                            //saving the professor in the users collections in firestore
-                            db.collection("users").document(uid).set(professeur)
-                                    .addOnSuccessListener(aVoid -> {
-                                        Toast.makeText(this, "Professeur créé avec succès", Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(this, "Erreur: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                    });
-                        }
-                    } else {
-                        Toast.makeText(this, "Échec de l'inscription: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        FirebaseFirestore.getInstance()
+                                .collection("users")
+                                .document(user.getUid())
+                                .set(profData)
+                                .addOnSuccessListener(unused -> {
+                                    Toast.makeText(this, "Professeur créé avec succès", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                });
                     }
-                });
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Erreur : " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
 }
