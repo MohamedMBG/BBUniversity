@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.example.bbuniversity.admin_panel.AdminActivity;
+import com.example.bbuniversity.etudiant.StudentActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
 
         admin.setOnClickListener(v -> {
             Intent intent = new Intent(this, AdminActivity.class);
+            startActivity(intent);
+        });
+
+        student.setOnClickListener(v-> {
+            Intent intent = new Intent(this , StudentActivity.class);
             startActivity(intent);
         });
 
