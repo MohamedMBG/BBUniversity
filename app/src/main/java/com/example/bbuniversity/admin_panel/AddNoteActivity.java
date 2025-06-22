@@ -50,6 +50,12 @@ public class AddNoteActivity extends AppCompatActivity {
         // Setup listeners for grade calculation
         setupGradeCalculators();
 
+        // Prefill fields if provided
+        if (getIntent() != null) {
+            String email = getIntent().getStringExtra("studentEmail");
+            if (email != null) etStudentEmail.setText(email);
+        }
+
         btnAddNote.setOnClickListener(v -> addNote());
         btnCancel.setOnClickListener(v -> finish());
     }
@@ -118,6 +124,9 @@ public class AddNoteActivity extends AppCompatActivity {
                         note.put("participation", participation);
                         note.put("noteGenerale", moyenne);
                         note.put("professeurId", "admin");
+                        String profId = getIntent() != null ? getIntent().getStringExtra("professorId") : null;
+                        if (profId == null || profId.isEmpty()) profId = "admin";
+                        note.put("professeurId", profId);
                         note.put("derniereMiseAJour", Timestamp.now());
 
 

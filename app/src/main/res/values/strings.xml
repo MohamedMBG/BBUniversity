@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">B&amp;BUniversity</string>
+
+    <string name="welcome_teacher">Welcome, %1$s</string>
 </resources>
