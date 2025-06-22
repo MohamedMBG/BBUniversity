@@ -36,6 +36,9 @@
             android:name=".etudiant.StudentDashboard"
             android:exported="false" />
         <activity
+            android:name=".etudiant.StudentGradesActivity"
+            android:exported="false" />
+        <activity
             android:name=".admin_panel.AdminDashboard"
             android:exported="false" />
         <activity

@@ -158,15 +158,16 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Average"
+                        android:text="Overall Grade (/20)"
                         android:textColor="@color/text_secondary"
                         android:textSize="14sp"
                         android:layout_marginBottom="4dp" />
 
                     <TextView
+                        android:id="@+id/tvOverallGrade"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="85%"
+                        android:text="--/20"
                         android:textStyle="bold"
                         android:textSize="24sp"
                         android:textColor="@color/accent_gold_dark" />
@@ -218,6 +219,7 @@
                         android:textColor="@color/black" />
 
                     <TextView
+                        android:id="@+id/tvViewAllGrades"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="View All"
@@ -227,173 +229,11 @@
 
                 </LinearLayout>
 
-                <!-- Grade Item 1 -->
-                <LinearLayout
+                <!-- Liste des notes de l'\u00e9tudiant -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/notes_recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="12dp"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/ripple_background"
-                    android:padding="8dp"
-                    android:clickable="true">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Midterm Exam"
-                            android:textSize="16sp"
-                            android:textColor="@color/black"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Math 101"
-                            android:textSize="14sp"
-                            android:textColor="@color/text_secondary" />
-
-                    </LinearLayout>
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="0dp"
-                        app:cardBackgroundColor="@color/success_light">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="85"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
-                            android:textColor="@color/info_color"
-                            android:padding="8dp"
-                            android:minWidth="40dp"
-                            android:gravity="center" />
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                </LinearLayout>
-
-                <!-- Grade Item 2 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="12dp"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/ripple_background"
-                    android:padding="8dp"
-                    android:clickable="true">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Final Paper"
-                            android:textSize="16sp"
-                            android:textColor="@color/black"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="History 202"
-                            android:textSize="14sp"
-                            android:textColor="@color/text_secondary" />
-
-                    </LinearLayout>
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="0dp"
-                        app:cardBackgroundColor="@color/success_light">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="92"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
-                            android:textColor="@color/info_color"
-                            android:padding="8dp"
-                            android:minWidth="40dp"
-                            android:gravity="center" />
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                </LinearLayout>
-
-                <!-- Grade Item 3 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/ripple_background"
-                    android:padding="8dp"
-                    android:clickable="true">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Lab Report"
-                            android:textSize="16sp"
-                            android:textColor="@color/black"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Science 303"
-                            android:textSize="14sp"
-                            android:textColor="@color/text_secondary" />
-
-                    </LinearLayout>
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="0dp"
-                        app:cardBackgroundColor="@color/success_light">
-
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="78"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
-                            android:textColor="@color/info_color"
-                            android:padding="8dp"
-                            android:minWidth="40dp"
-                            android:gravity="center" />
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                </LinearLayout>
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 
