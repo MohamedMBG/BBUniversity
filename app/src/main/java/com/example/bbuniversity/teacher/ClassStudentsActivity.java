@@ -13,6 +13,10 @@ import com.example.bbuniversity.models.Etudiant;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import android.util.Log;
+import java.util.Map;
+import java.util.HashMap;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,16 +49,54 @@ public class ClassStudentsActivity extends AppCompatActivity implements StudentA
     private void loadStudents() {
         FirebaseFirestore.getInstance().collection("users")
                 .whereEqualTo("role", "student")
-                .whereEqualTo("classeCode", className)
+                .whereEqualTo("classe", className)
                 .get()
-                .addOnSuccessListener(query -> {
-                    students.clear();
-                    for (DocumentSnapshot doc : query.getDocuments()) {
-                        Etudiant e = doc.toObject(Etudiant.class);
-                        if (e != null) students.add(e);
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        students.clear();
+                        for (DocumentSnapshot doc : task.getResult()) {
+                            try {
+                                Map<String, Object> data = new HashMap<>(doc.getData());
+
+                                // Ensure matricule is stored as String
+                                if (data.get("matricule") instanceof Number) {
+                                    data.put("matricule", String.valueOf(data.get("matricule")));
+                                }
+
+                                String codeClasse = data.containsKey("codeClasse")
+                                        ? (String) data.get("codeClasse")
+                                        : generateCodeClasse(
+                                                ((Number) data.getOrDefault("niveau", 0)).intValue(),
+                                                (String) data.getOrDefault("filiere", ""),
+                                                (String) data.getOrDefault("classe", "")
+                                        );
+
+                                Etudiant e = new Etudiant(
+                                        doc.getId(),
+                                        (String) data.get("nom"),
+                                        (String) data.get("prenom"),
+                                        (String) data.get("email"),
+                                        (String) data.get("matricule"),
+                                        ((Number) data.getOrDefault("niveau", 0)).intValue(),
+                                        (String) data.get("filiere"),
+                                        codeClasse
+                                );
+                                e.setClasse((String) data.get("classe"));
+                                students.add(e);
+                            } catch (Exception ex) {
+                                Log.e("StudentLoadError", "Error mapping student: " + ex.getMessage());
+                            }
+                        }
+                        adapter.updateList(students);
+                    } else {
+                        Log.e("StudentLoadError", "Failed to load students" +
+                                (task.getException() != null ? ": " + task.getException().getMessage() : ""));
                     }
-                    adapter.updateList(students);
                 });
+    }
+
+    private String generateCodeClasse(int niveau, String filiere, String classe) {
+        return niveau + filiere + classe;
     }
 
     @Override

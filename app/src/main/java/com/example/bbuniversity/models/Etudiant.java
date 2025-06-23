@@ -5,6 +5,7 @@ public class Etudiant extends User {
     private int niveau;
     private String filiere;
     private String classeCode;
+    private String classe;
 
     public Etudiant() {}
 
@@ -49,5 +50,13 @@ public class Etudiant extends User {
 
     public void setClasseCode(String classeCode) {
         this.classeCode = classeCode;
+    }
+
+    public String getClasse() {
+        return classe;
+    }
+
+    public void setClasse(String classe) {
+        this.classe = classe;
     }
 }

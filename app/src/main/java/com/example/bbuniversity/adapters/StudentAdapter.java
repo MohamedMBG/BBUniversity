@@ -76,7 +76,8 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
             studentName.setText(fullName.trim().isEmpty() ? "No Name" : fullName);
 
             studentEmail.setText(student.getEmail() != null ? student.getEmail() : "No Email");
-            studentClass.setText(student.getClasseCode() != null ? student.getClasseCode() : "No Class");
+            String classDisplay = student.getClasse() != null ? student.getClasse() : student.getClasseCode();
+            studentClass.setText(classDisplay != null ? classDisplay : "No Class");
             studentMatricule.setText(student.getMatricule() != null ? student.getMatricule() : "No ID");
 
             // Safe click listeners
