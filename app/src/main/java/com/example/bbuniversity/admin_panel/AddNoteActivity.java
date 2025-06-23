@@ -53,8 +53,18 @@ public class AddNoteActivity extends AppCompatActivity {
         // Prefill fields if provided
         if (getIntent() != null) {
             String email = getIntent().getStringExtra("studentEmail");
-            if (email != null) etStudentEmail.setText(email);
+            if (email != null) {
+                etStudentEmail.setText(email);
+                etStudentEmail.setEnabled(false);
+            }
+
+            String subject = getIntent().getStringExtra("subject");
+            if (subject != null) {
+                etMatiere.setText(subject);
+                etMatiere.setEnabled(false);
+            }
         }
+
 
         btnAddNote.setOnClickListener(v -> addNote());
         btnCancel.setOnClickListener(v -> finish());
@@ -123,7 +133,7 @@ public class AddNoteActivity extends AppCompatActivity {
                         note.put("examenFinal", examen);
                         note.put("participation", participation);
                         note.put("noteGenerale", moyenne);
-                        note.put("professeurId", "admin");
+                        //note.put("professeurId", "admin");
                         String profId = getIntent() != null ? getIntent().getStringExtra("professorId") : null;
                         if (profId == null || profId.isEmpty()) profId = "admin";
                         note.put("professeurId", profId);
