@@ -3,6 +3,7 @@ package com.example.bbuniversity.models;
 import java.util.Date;
 
 public class Abscence {
+    private String documentId;
     private String matiere;
     private Date date;
     private boolean justifiee;
@@ -16,6 +17,14 @@ public class Abscence {
     }
 
     // Getters & Setters
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
+    }
 
     public String getMatiere() {
         return matiere;

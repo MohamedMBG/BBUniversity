@@ -13,6 +13,12 @@
         android:theme="@style/Theme.BBUniversity"
         tools:targetApi="31">
         <activity
+            android:name=".admin_panel.ManageAbsencesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin_panel.AddAbsenceActivity"
+            android:exported="false" />
+        <activity
             android:name=".teacher.ClassStudentsActivity"
             android:exported="false" />
         <activity

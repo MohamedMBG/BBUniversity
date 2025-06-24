@@ -187,6 +187,18 @@
             app:backgroundTint="@color/primary_medium"
             app:cornerRadius="8dp"
             android:elevation="2dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnManageAbsences"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Gérer les absences"
+            app:backgroundTint="@color/primary_medium"
+            android:textColor="@color/white"
+            app:cornerRadius="8dp"
+            android:elevation="2dp"/>
+
         <!-- Cancel Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancel"
@@ -199,6 +211,7 @@
             android:textColor="@color/error_color"
             app:cornerRadius="8dp"
             android:elevation="2dp"/>
+
 
     </LinearLayout>
 </ScrollView>

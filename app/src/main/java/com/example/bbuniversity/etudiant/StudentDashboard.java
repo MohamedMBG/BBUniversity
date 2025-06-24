@@ -175,7 +175,10 @@ public class StudentDashboard extends AppCompatActivity {
                     absenceList.clear();
                     for (DocumentSnapshot doc : query.getDocuments()) {
                         Abscence a = doc.toObject(Abscence.class);
-                        if (a != null) absenceList.add(a);
+                        if (a != null) {
+                            a.setDocumentId(doc.getId());
+                            absenceList.add(a);
+                        }
                     }
                     adapter.notifyDataSetChanged();
                 })
