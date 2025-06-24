@@ -3,6 +3,7 @@ package com.example.bbuniversity.etudiant;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.bbuniversity.EmailSender;
 import com.example.bbuniversity.R;
 import com.example.bbuniversity.adapters.AbsenceAdapter;
 import com.example.bbuniversity.adapters.StudentNoteAdapter;
@@ -25,6 +27,8 @@ import com.google.firebase.firestore.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import javax.mail.MessagingException;
 
 public class StudentDashboard extends AppCompatActivity {
 
@@ -61,13 +65,7 @@ public class StudentDashboard extends AppCompatActivity {
         Button btnLogout = findViewById(R.id.btnLogout);
 
 
-        btnLogout.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(this, StudentActivity.class));
-            finish();
-        });
-
-
+        btnLogout.setOnClickListener(v -> {logout(); }); // on appel cette methode quand on click sur le bouton logout
 
         adapter = new AbsenceAdapter(absenceList); // adaptateur pour les absences
         absencesRecyclerView.setLayoutManager(new LinearLayoutManager(this)); // disposition verticale
@@ -155,17 +153,29 @@ public class StudentDashboard extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(doc -> {
                     String email = doc.getString("email");
-                    if (email != null) {
-                        android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_SENDTO);
-                        intent.setData(android.net.Uri.parse("mailto:" + email));
-                        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "New grade complaint");
-                        intent.putExtra(android.content.Intent.EXTRA_TEXT, message);
+//                    if (email != null) {
+//                        android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_SENDTO);
+//                        intent.setData(android.net.Uri.parse("mailto:" + email));
+//                        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "New grade complaint");
+//                        intent.putExtra(android.content.Intent.EXTRA_TEXT, message);
+//                        try {
+//                            startActivity(intent);
+//                        } catch (android.content.ActivityNotFoundException ignored) {
+//                        }
+//                    }
+                    // si il n'y avait pas d'email la fonction ne sera pas executee pour des raisons de securite
+                    if (email == null || email.isEmpty()) return;
+                    //sinon
+                    else {
                         try {
-                            startActivity(intent);
-                        } catch (android.content.ActivityNotFoundException ignored) {
+                            EmailSender.sendEmail(email, "nouvelle complainte recu", message);
+                        } catch (MessagingException e) {
+                            throw new RuntimeException(e);
                         }
                     }
-                });
+
+                })
+                .addOnFailureListener(e -> Log.e("notifyTeacher", "Impossible de récupérer l'email du prof", e));
     }
 
 
@@ -236,6 +246,11 @@ public class StudentDashboard extends AppCompatActivity {
     private String getSafe(DocumentSnapshot doc, String key) {
         Object val = doc.get(key);
         return val != null ? val.toString() : "";
+    }
+    private void logout(){
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(this, StudentActivity.class));
+        finish();
     }
 
 }

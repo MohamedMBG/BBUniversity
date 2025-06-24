@@ -17,6 +17,16 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    packaging {
+        resources {
+            // Exclude the duplicated NOTICE file (and any other you need)
+            excludes += listOf(
+                "META-INF/NOTICE.md",
+                "META-INF/LICENSE.md"
+            )
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -46,4 +56,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    //smtp implementations
+    implementation(libs.android.mail)
+    implementation(libs.android.activation)
 }
