@@ -113,14 +113,17 @@ public class StudentGradesActivity extends AppCompatActivity {
                 .addOnSuccessListener(doc -> {
                     String email = doc.getString("email");
                     if (email != null) {
-                        android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_SENDTO);
-                        intent.setData(android.net.Uri.parse("mailto:" + email));
-                        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "New grade complaint");
-                        intent.putExtra(android.content.Intent.EXTRA_TEXT, message);
-                        try {
-                            startActivity(intent);
-                        } catch (android.content.ActivityNotFoundException ignored) {
-                        }
+                        new Thread(() -> {
+                            try {
+                                com.example.bbuniversity.utils.EmailSender.sendEmail(
+                                        email,
+                                        "New grade complaint",
+                                        message
+                                );
+                            } catch (javax.mail.MessagingException e) {
+                                e.printStackTrace();
+                            }
+                        }).start();
                     }
                 });
     }
