@@ -18,40 +18,51 @@ import java.util.Locale;
 
 public class ComplaintAdapter extends RecyclerView.Adapter<ComplaintAdapter.ViewHolder> {
 
+    public interface OnComplaintClickListener {
+        void onComplaintClick(Complaint complaint);
+    }
+
+
     private final List<Complaint> complaints;
+    private final OnComplaintClickListener listener;
 
-    public ComplaintAdapter(List<Complaint> complaints) {
-        this.complaints = complaints;
-    }
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_complaint, parent, false);
-        return new ViewHolder(view);
-    }
+    public ComplaintAdapter(List<Complaint> complaints, OnComplaintClickListener listener) {
+            this.complaints = complaints;
+            this.listener = listener;
+        }
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Complaint c = complaints.get(position);
-        holder.message.setText(c.getMessage());
-        if (c.getTimestamp() != null) {
-            String date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(c.getTimestamp().toDate());
-            holder.date.setText(date);
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_complaint, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            Complaint c = complaints.get(position);
+            holder.message.setText(c.getMessage());
+            if (c.getTimestamp() != null) {
+                String date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(c.getTimestamp().toDate());
+                holder.date.setText(date);
+            }
+            holder.itemView.setOnClickListener(v -> {
+                if (listener != null) listener.onComplaintClick(c);
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return complaints != null ? complaints.size() : 0;
+        }
+
+        static class ViewHolder extends RecyclerView.ViewHolder {
+            TextView message, date;
+            ViewHolder(@NonNull View itemView) {
+                super(itemView);
+                message = itemView.findViewById(R.id.tvComplaintMessage);
+                date = itemView.findViewById(R.id.tvComplaintDate);
+            }
         }
     }
-
-    @Override
-    public int getItemCount() {
-        return complaints != null ? complaints.size() : 0;
-    }
-
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView message, date;
-        ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            message = itemView.findViewById(R.id.tvComplaintMessage);
-            date = itemView.findViewById(R.id.tvComplaintDate);
-        }
-    }
-}

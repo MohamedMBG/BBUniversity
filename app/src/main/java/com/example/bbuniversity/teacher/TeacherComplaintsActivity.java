@@ -28,7 +28,8 @@ public class TeacherComplaintsActivity extends AppCompatActivity {
 
         RecyclerView recycler = findViewById(R.id.recyclerComplaints);
         recycler.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ComplaintAdapter(complaints);
+        adapter = new ComplaintAdapter(complaints, this::openDetail);
+
         recycler.setAdapter(adapter);
 
         loadComplaints();
@@ -43,9 +44,19 @@ public class TeacherComplaintsActivity extends AppCompatActivity {
                     complaints.clear();
                     for (DocumentSnapshot doc : query.getDocuments()) {
                         Complaint c = doc.toObject(Complaint.class);
-                        if (c != null) complaints.add(c);
+                        if (c != null) {
+                            c.setDocumentPath(doc.getReference().getPath());
+                            complaints.add(c);
+                        }
                     }
                     adapter.notifyDataSetChanged();
                 });
+    }
+    private void openDetail(Complaint complaint) {
+        android.content.Intent i = new android.content.Intent(this, TeacherComplaintDetailActivity.class);
+        i.putExtra("path", complaint.getDocumentPath());
+        i.putExtra("notePath", complaint.getNotePath());
+        i.putExtra("message", complaint.getMessage());
+        startActivity(i);
     }
 }

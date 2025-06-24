@@ -96,11 +96,32 @@ public class StudentGradesActivity extends AppCompatActivity {
         data.put("professeurId", note.getProfesseurId());
         data.put("message", message);
         data.put("timestamp", com.google.firebase.Timestamp.now());
+        data.put("status", "pending");
 
         db.collection("users").document(user.getUid())
                 .collection("plaintes")
                 .add(data)
                 .addOnSuccessListener(r -> Toast.makeText(this , "Plainte envoyée" , Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(this , "Erreur : " + e.getMessage() , Toast.LENGTH_SHORT).show());
+
+        notifyTeacher(note.getProfesseurId(), message);
+    }
+
+    private void notifyTeacher(String profId, String message) {
+        FirebaseFirestore.getInstance().collection("users").document(profId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    String email = doc.getString("email");
+                    if (email != null) {
+                        android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_SENDTO);
+                        intent.setData(android.net.Uri.parse("mailto:" + email));
+                        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "New grade complaint");
+                        intent.putExtra(android.content.Intent.EXTRA_TEXT, message);
+                        try {
+                            startActivity(intent);
+                        } catch (android.content.ActivityNotFoundException ignored) {
+                        }
+                    }
+                });
     }
 }
