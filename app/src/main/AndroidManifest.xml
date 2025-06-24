@@ -28,6 +28,9 @@
             android:name=".teacher.TeacherComplaintsActivity"
             android:exported="false" />
         <activity
+            android:name=".teacher.TeacherComplaintDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".teacher.TeacherDashboard"
             android:exported="false" />
         <activity
@@ -64,6 +67,9 @@
             android:exported="false" />
         <activity
             android:name=".etudiant.StudentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ForgotPasswordActivity"
             android:exported="false" />
         <activity
             android:name=".admin_panel.AdminActivity"

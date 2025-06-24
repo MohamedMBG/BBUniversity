@@ -48,6 +48,11 @@ public class TeacherDashboard extends AppCompatActivity implements ClassAdapter.
                 startActivity(new Intent(this, AddNoteActivity.class)));
         findViewById(R.id.btnAllClasses).setOnClickListener(v ->
                 startActivity(new Intent(this, TeacherClassesActivity.class)));
+        findViewById(R.id.btnLogout).setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(this, TeacherActivity.class));
+            finish();
+        });
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {

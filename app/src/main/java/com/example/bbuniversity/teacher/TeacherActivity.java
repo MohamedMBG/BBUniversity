@@ -19,6 +19,7 @@ public class TeacherActivity extends AppCompatActivity {
 
     private TextInputEditText etUsername, etPassword;
     private Button connectBtn, back;
+    private android.widget.TextView tvForgot;
     private FirebaseAuth auth;
     private FirebaseFirestore db;
 
@@ -32,6 +33,7 @@ public class TeacherActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         connectBtn = findViewById(R.id.connect_btn);
         back = findViewById(R.id.back);
+        tvForgot = findViewById(R.id.tvForgotPassword);
 
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -48,6 +50,9 @@ public class TeacherActivity extends AppCompatActivity {
             }
             loginTeacher(email, password);
         });
+
+        tvForgot.setOnClickListener(v ->
+                startActivity(new android.content.Intent(this, ForgotPasswordActivity.class)));
     }
 
     private void loginTeacher(String email, String password) {

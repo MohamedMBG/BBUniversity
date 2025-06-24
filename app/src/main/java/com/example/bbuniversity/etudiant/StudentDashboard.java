@@ -58,6 +58,7 @@ public class StudentDashboard extends AppCompatActivity {
         tvOverallGrade = findViewById(R.id.tvOverallGrade); // moyenne generale
         tvViewAllGrades = findViewById(R.id.tvViewAllGrades);
         Button btnViewGrades = findViewById(R.id.btnViewGrades);
+        Button btnLogout = findViewById(R.id.btnLogout);
 
 
 
@@ -75,6 +76,11 @@ public class StudentDashboard extends AppCompatActivity {
                 startActivity(new Intent(this, StudentGradesActivity.class));
         tvViewAllGrades.setOnClickListener(openAll);
         btnViewGrades.setOnClickListener(openAll);
+        btnLogout.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(this, StudentActivity.class));
+            finish();
+        });
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -131,12 +137,33 @@ public class StudentDashboard extends AppCompatActivity {
         data.put("professeurId", note.getProfesseurId()); // prof concerne
         data.put("message", message); // contenu de la plainte
         data.put("timestamp", com.google.firebase.Timestamp.now()); // date
+        data.put("status", "pending");
 
         db.collection("users").document(user.getUid())
                 .collection("plaintes")
                 .add(data)
                 .addOnSuccessListener(r -> Toast.makeText(this , "Plainte envoyee" , Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(this , "Erreur : " + e.getMessage() , Toast.LENGTH_SHORT).show());
+
+        notifyTeacher(note.getProfesseurId(), message);
+    }
+
+    private void notifyTeacher(String profId, String message) {
+        FirebaseFirestore.getInstance().collection("users").document(profId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    String email = doc.getString("email");
+                    if (email != null) {
+                        android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_SENDTO);
+                        intent.setData(android.net.Uri.parse("mailto:" + email));
+                        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "New grade complaint");
+                        intent.putExtra(android.content.Intent.EXTRA_TEXT, message);
+                        try {
+                            startActivity(intent);
+                        } catch (android.content.ActivityNotFoundException ignored) {
+                        }
+                    }
+                });
     }
 
 

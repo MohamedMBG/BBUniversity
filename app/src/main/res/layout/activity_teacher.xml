@@ -90,13 +90,14 @@
 
         <!-- Help Text -->
         <TextView
+            android:id="@+id/tvForgotPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_gravity="start"
             android:fontFamily="@font/montserrat_medium"
-            android:text="Get in touch with the administration"
-            android:textSize="10sp" />
+            android:text="Forgot password?"
+            android:textSize="12sp" />
 
         <!-- Connect Button -->
         <com.google.android.material.button.MaterialButton

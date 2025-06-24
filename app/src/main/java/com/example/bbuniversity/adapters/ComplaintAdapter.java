@@ -18,10 +18,16 @@ import java.util.Locale;
 
 public class ComplaintAdapter extends RecyclerView.Adapter<ComplaintAdapter.ViewHolder> {
 
-    private final List<Complaint> complaints;
+    public interface OnComplaintClickListener {
+        void onComplaintClick(Complaint complaint);
+    }
 
-    public ComplaintAdapter(List<Complaint> complaints) {
+    private final List<Complaint> complaints;
+    private final OnComplaintClickListener listener;
+
+    public ComplaintAdapter(List<Complaint> complaints, OnComplaintClickListener listener) {
         this.complaints = complaints;
+        this.listener = listener;
     }
 
     @NonNull
@@ -39,6 +45,9 @@ public class ComplaintAdapter extends RecyclerView.Adapter<ComplaintAdapter.View
             String date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(c.getTimestamp().toDate());
             holder.date.setText(date);
         }
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) listener.onComplaintClick(c);
+        });
     }
 
     @Override
