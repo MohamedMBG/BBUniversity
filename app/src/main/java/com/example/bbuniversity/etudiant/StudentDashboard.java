@@ -27,6 +27,8 @@ import com.google.firebase.firestore.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.mail.MessagingException;
 
@@ -149,33 +151,33 @@ public class StudentDashboard extends AppCompatActivity {
     }
 
     private void notifyTeacher(String profId, String message) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String nom= currentUser.getDisplayName();
         FirebaseFirestore.getInstance().collection("users").document(profId)
                 .get()
                 .addOnSuccessListener(doc -> {
                     String email = doc.getString("email");
-//                    if (email != null) {
-//                        android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_SENDTO);
-//                        intent.setData(android.net.Uri.parse("mailto:" + email));
-//                        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "New grade complaint");
-//                        intent.putExtra(android.content.Intent.EXTRA_TEXT, message);
-//                        try {
-//                            startActivity(intent);
-//                        } catch (android.content.ActivityNotFoundException ignored) {
-//                        }
-//                    }
+
                     // si il n'y avait pas d'email la fonction ne sera pas executee pour des raisons de securite
                     if (email == null || email.isEmpty()) return;
                     //sinon
                     else {
-                        try {
-                            EmailSender.sendEmail(email, "nouvelle complainte recu", message);
-                        } catch (MessagingException e) {
-                            throw new RuntimeException(e);
-                        }
+
+                        // wherever you currently call sendEmail():
+                        new Thread(() -> {
+                            try {
+                                EmailSender.sendEmail(email , "Nouvelle reclamation reçu", "Bonjour cher Professeur, \n " +
+                                        "l'etudiant " + nom  +
+                                        " vous a envoye une reclamation concernant sa note. \n le message et le suivant " +message);
+                            } catch (Exception e) {
+                                Log.e("Email", "failed to send", e);
+                            }
+                        }).start();
+
                     }
 
                 })
-                .addOnFailureListener(e -> Log.e("notify Teacher", "Impossible de récupérer l'email du prof", e));
+                .addOnFailureListener(e -> Log.e("notifyTeacher", "Impossible de récupérer l'email du prof", e));
     }
 
 

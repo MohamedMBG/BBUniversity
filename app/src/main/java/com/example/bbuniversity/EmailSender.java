@@ -12,11 +12,11 @@ import javax.mail.internet.MimeMessage;
 public class EmailSender {
 
     // Configuration SMTP
-    private static final String SMTP_HOST = "smtp.example.com"; // Hôte du serveur SMTP
+    private static final String SMTP_HOST = "smtp.gmail.com"; // Hôte du serveur SMTP
     private static final String SMTP_PORT = "587";              // Port du serveur SMTP (généralement 587 pour TLS)
-    private static final String USERNAME = "B&B University";          // Nom d'utilisateur du compte SMTP
-    private static final String PASSWORD = "password";          // Mot de passe du compte SMTP
-    private static final String FROM_EMAIL = "noreply@example.com"; // Email de l'expéditeur
+    private static final String USERNAME = "baghdadmohamed.me@gmail.com";          // Nom d'utilisateur du compte SMTP
+    private static final String PASSWORD = "enxy piut ewpd zhvm";          // Mot de passe du compte SMTP
+    private static final String FROM_EMAIL = "baghdadmohamed.me@gmail.com"; // Email de l'expéditeur
 
     // Méthode pour envoyer un email
     public static void sendEmail(String to, String subject, String body) throws MessagingException {
