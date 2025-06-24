@@ -175,7 +175,7 @@ public class StudentDashboard extends AppCompatActivity {
                     }
 
                 })
-                .addOnFailureListener(e -> Log.e("notifyTeacher", "Impossible de récupérer l'email du prof", e));
+                .addOnFailureListener(e -> Log.e("notify Teacher", "Impossible de récupérer l'email du prof", e));
     }
 
 
