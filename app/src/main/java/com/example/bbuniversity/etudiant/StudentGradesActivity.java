@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bbuniversity.R;
 import com.example.bbuniversity.adapters.StudentNoteAdapter;
+import com.example.bbuniversity.models.Complaint;
 import com.example.bbuniversity.models.Note;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -86,24 +88,41 @@ public class StudentGradesActivity extends AppCompatActivity {
                 .show();
     }
 
-    /** Envoie la plainte dans Firestore */
+    /** Crée un objet Complaint et l’envoie dans la collection racine */
     private void sendComplaint(Note note, String message) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;
 
-        java.util.Map<String, Object> data = new java.util.HashMap<>();
-        data.put("notePath", note.getDocumentPath());
-        data.put("professeurId", note.getProfesseurId());
-        data.put("message", message);
-        data.put("timestamp", com.google.firebase.Timestamp.now());
-        data.put("status", "pending");
+        // 1) Construire l'objet Complaint
+        Complaint complaint = new Complaint(
+                user.getUid(),                   // studentId
+                note.getProfesseurId(),          // teacherId
+                note.getMatiere(),             // subjectId (ou null si non géré)
+                note.getDocumentPath(),          // noteId
+                note.getNoteGenerale(),                 // initialGrade (double)
+                note.getNoteGenerale(),                 // modifiedGrade (start = original)
+                "Réclamation de note",           // title
+                message,                         // description
+                "",                              // response (vide pour l’instant)
+                "pending",                       // status
+                Timestamp.now(),                 // dateFiled
+                null                             // dateProcessed
+        );
 
-        db.collection("users").document(user.getUid())
-                .collection("plaintes")
-                .add(data)
-                .addOnSuccessListener(r -> Toast.makeText(this , "Plainte envoyée" , Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(this , "Erreur : " + e.getMessage() , Toast.LENGTH_SHORT).show());
+        // 2) Écrire dans la collection "complaints"
+        db.collection("complaints")
+                .add(complaint)
+                .addOnSuccessListener(r -> {
+                    Toast.makeText(this, "Réclamation envoyée", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this,
+                            "Erreur d'envoi : " + e.getMessage(),
+                            Toast.LENGTH_LONG
+                    ).show();
+                });
 
+        // 3) (optionnel) notifier le prof par email
         notifyTeacher(note.getProfesseurId(), message);
     }
 

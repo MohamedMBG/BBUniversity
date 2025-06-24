@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bbuniversity.R;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -26,13 +27,15 @@ public class TeacherComplaintDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher_complaint_detail);
 
-        complaintPath = getIntent().getStringExtra("path");
-        notePath = getIntent().getStringExtra("notePath");
-        String message = getIntent().getStringExtra("message");
+        // 1) Read the extras with the SAME keys you used when launching
+        complaintPath = getIntent().getStringExtra("complaintPath");
+        notePath      = getIntent().getStringExtra("noteId");
+        String message= getIntent().getStringExtra("description");
 
+        // 2) Bind views
         etNewGrade = findViewById(R.id.etNewGrade);
-        tvMessage = findViewById(R.id.tvComplaintMessage);
-        tvMessage.setText(message);
+        tvMessage  = findViewById(R.id.tvComplaintMessage);
+        tvMessage.setText(message != null ? message : "");
 
         Button accept = findViewById(R.id.btnAcceptComplaint);
         Button reject = findViewById(R.id.btnRejectComplaint);
@@ -44,36 +47,73 @@ public class TeacherComplaintDetailActivity extends AppCompatActivity {
     private void acceptComplaint() {
         String gradeStr = etNewGrade.getText().toString().trim();
         if (gradeStr.isEmpty()) {
-            Toast.makeText(this, "Enter new grade", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Veuillez entrer la nouvelle note", Toast.LENGTH_SHORT).show();
             return;
         }
-        double grade = Double.parseDouble(gradeStr);
-        if (complaintPath == null || notePath == null) return;
+
+        double grade;
+        try {
+            grade = Double.parseDouble(gradeStr);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Note invalide", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (complaintPath == null || notePath == null) {
+            Toast.makeText(this, "Données manquantes", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         DocumentReference compRef = FirebaseFirestore.getInstance().document(complaintPath);
         DocumentReference noteRef = FirebaseFirestore.getInstance().document(notePath);
 
-        noteRef.update("noteGenerale", grade);
-        compRef.update("status", "accepted", "response", "Grade updated to " + grade)
-                .addOnSuccessListener(v -> {
-                    Toast.makeText(this, "Complaint accepted", Toast.LENGTH_SHORT).show();
-                    finish();
-                });
+        // 3) Update the student’s grade
+        noteRef.update("noteGenerale", grade)
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Erreur mise à jour note : " + e.getMessage(), Toast.LENGTH_LONG).show()
+                );
+
+        // 4) Update complaint: status, response, and dateProcessed
+        compRef.update(
+                "status", "accepted", "modifiedGrade" , grade ,
+                "response", "Note mise à jour à " + grade,
+                "dateProcessed", Timestamp.now()
+        ).addOnSuccessListener(v -> {
+            Toast.makeText(this, "Plainte acceptée", Toast.LENGTH_SHORT).show();
+            finish();
+        }).addOnFailureListener(e ->
+                Toast.makeText(this, "Erreur mise à jour plainte : " + e.getMessage(), Toast.LENGTH_LONG).show()
+        );
     }
 
     private void rejectComplaint() {
+        if (complaintPath == null) {
+            Toast.makeText(this, "Données manquantes", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         final EditText input = new EditText(this);
         new AlertDialog.Builder(this)
-                .setTitle("Reason")
+                .setTitle("Raison du refus")
                 .setView(input)
-                .setPositiveButton("Submit", (d, w) -> {
+                .setPositiveButton("Envoyer", (d, w) -> {
                     String reason = input.getText().toString().trim();
-                    if (complaintPath == null) return;
-                    FirebaseFirestore.getInstance().document(complaintPath)
-                            .update("status", "rejected", "response", reason)
-                            .addOnSuccessListener(v2 -> {
-                                Toast.makeText(this, "Complaint rejected", Toast.LENGTH_SHORT).show();
-                                finish();
-                            });
+                    if (reason.isEmpty()) {
+                        Toast.makeText(this, "Veuillez entrer une raison", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    DocumentReference compRef = FirebaseFirestore.getInstance().document(complaintPath);
+                    compRef.update(
+                            "status", "rejected",
+                            "response", reason,
+                            "dateProcessed", Timestamp.now()
+                    ).addOnSuccessListener(v2 -> {
+                        Toast.makeText(this, "Plainte refusée", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }).addOnFailureListener(e2 ->
+                            Toast.makeText(this, "Erreur mise à jour plainte : " + e2.getMessage(), Toast.LENGTH_LONG).show()
+                    );
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();

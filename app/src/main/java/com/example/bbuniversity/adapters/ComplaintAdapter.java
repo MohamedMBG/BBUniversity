@@ -1,6 +1,5 @@
 package com.example.bbuniversity.adapters;
 
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,58 +10,72 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bbuniversity.R;
 import com.example.bbuniversity.models.Complaint;
+import com.google.firebase.Timestamp;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
-public class ComplaintAdapter extends RecyclerView.Adapter<ComplaintAdapter.ViewHolder> {
+/**
+ * RecyclerView adapter for displaying a list of Complaint objects.
+ */
+public class ComplaintAdapter
+        extends RecyclerView.Adapter<ComplaintAdapter.ViewHolder> {
 
     public interface OnComplaintClickListener {
         void onComplaintClick(Complaint complaint);
     }
 
-
     private final List<Complaint> complaints;
     private final OnComplaintClickListener listener;
 
+    public ComplaintAdapter(List<Complaint> complaints,
+                            OnComplaintClickListener listener) {
+        this.complaints = complaints;
+        this.listener   = listener;
+    }
 
-    public ComplaintAdapter(List<Complaint> complaints, OnComplaintClickListener listener) {
-            this.complaints = complaints;
-            this.listener = listener;
+    @NonNull @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_complaint, parent, false);
+        return new ViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int pos) {
+        Complaint c = complaints.get(pos);
+
+        holder.titleView.setText(c.getTitle());
+        holder.statusView.setText(c.getStatus());
+        holder.messageView.setText(c.getDescription());
+
+        Timestamp ts = c.getDateFiled();
+        if (ts != null) {
+            holder.dateView.setText(
+                    DateFormat.getDateTimeInstance().format(ts.toDate())
+            );
+        } else {
+            holder.dateView.setText("Date inconnue");
         }
 
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_complaint, parent, false);
-            return new ViewHolder(view);
-        }
+        holder.itemView.setOnClickListener(v -> listener.onComplaintClick(c));
+    }
 
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            Complaint c = complaints.get(position);
-            holder.message.setText(c.getMessage());
-            if (c.getTimestamp() != null) {
-                String date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(c.getTimestamp().toDate());
-                holder.date.setText(date);
-            }
-            holder.itemView.setOnClickListener(v -> {
-                if (listener != null) listener.onComplaintClick(c);
-            });
-        }
+    @Override public int getItemCount() { return complaints.size(); }
 
-        @Override
-        public int getItemCount() {
-            return complaints != null ? complaints.size() : 0;
-        }
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        final TextView titleView;
+        final TextView statusView;
+        final TextView messageView;
+        final TextView dateView;
 
-        static class ViewHolder extends RecyclerView.ViewHolder {
-            TextView message, date;
-            ViewHolder(@NonNull View itemView) {
-                super(itemView);
-                message = itemView.findViewById(R.id.tvComplaintMessage);
-                date = itemView.findViewById(R.id.tvComplaintDate);
-            }
+        ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            titleView   = itemView.findViewById(R.id.complaintTitle);
+            statusView  = itemView.findViewById(R.id.complaintStatus);
+            messageView = itemView.findViewById(R.id.complaintMessage);
+            dateView    = itemView.findViewById(R.id.complaintDate);
         }
     }
+}

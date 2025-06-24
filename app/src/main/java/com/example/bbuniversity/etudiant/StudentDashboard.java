@@ -19,7 +19,9 @@ import com.example.bbuniversity.R;
 import com.example.bbuniversity.adapters.AbsenceAdapter;
 import com.example.bbuniversity.adapters.StudentNoteAdapter;
 import com.example.bbuniversity.models.Abscence;
+import com.example.bbuniversity.models.Complaint;
 import com.example.bbuniversity.models.Note;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.*;
@@ -27,19 +29,18 @@ import com.google.firebase.firestore.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.mail.MessagingException;
 
 public class StudentDashboard extends AppCompatActivity {
 
-    private TextView tvName, tvFiliere, tvMatricule, tvClasse, absencesCountText, tvOverallGrade, tvViewAllGrades;
+    private TextView tvName, tvFiliere, tvMatricule, tvClasse,
+            absencesCountText, tvOverallGrade, tvViewAllGrades;
     private RecyclerView absencesRecyclerView, notesRecyclerView;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final List<Abscence> absenceList = new ArrayList<>();
-    private final List<Note> noteList = new ArrayList<>();
+    private final List<Note> noteList     = new ArrayList<>();
     private AbsenceAdapter adapter;
     private StudentNoteAdapter noteAdapter;
 
@@ -49,140 +50,161 @@ public class StudentDashboard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_dashboard);
         EdgeToEdge.enable(this);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        );
 
-        //declaration des elements de ui
-        tvName = findViewById(R.id.FullStdName);
-        tvFiliere = findViewById(R.id.stdFiliere);
-        tvMatricule = findViewById(R.id.stdMatricule);
-        tvClasse = findViewById(R.id.stdClasse);
+        // UI bindings
+        tvName            = findViewById(R.id.FullStdName);
+        tvFiliere         = findViewById(R.id.stdFiliere);
+        tvMatricule       = findViewById(R.id.stdMatricule);
+        tvClasse          = findViewById(R.id.stdClasse);
         absencesCountText = findViewById(R.id.absences_count_text);
         absencesRecyclerView = findViewById(R.id.absences_recycler_view);
-        tvOverallGrade = findViewById(R.id.tvOverallGrade);
-        absencesRecyclerView = findViewById(R.id.absences_recycler_view); // liste des absences
-        notesRecyclerView = findViewById(R.id.notes_recycler_view); // liste des notes
-        tvOverallGrade = findViewById(R.id.tvOverallGrade); // moyenne generale
-        tvViewAllGrades = findViewById(R.id.tvViewAllGrades);
+        notesRecyclerView    = findViewById(R.id.notes_recycler_view);
+        tvOverallGrade       = findViewById(R.id.tvOverallGrade);
+        tvViewAllGrades      = findViewById(R.id.tvViewAllGrades);
         Button btnViewGrades = findViewById(R.id.btnViewGrades);
-        Button btnLogout = findViewById(R.id.btnLogout);
+        Button btnLogout     = findViewById(R.id.btnLogout);
 
+        // Logout
+        btnLogout.setOnClickListener(v -> logout());
 
-        btnLogout.setOnClickListener(v -> {logout(); }); // on appel cette methode quand on click sur le bouton logout
+        // Absences list
+        adapter = new AbsenceAdapter(absenceList);
+        absencesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        absencesRecyclerView.setAdapter(adapter);
 
-        adapter = new AbsenceAdapter(absenceList); // adaptateur pour les absences
-        absencesRecyclerView.setLayoutManager(new LinearLayoutManager(this)); // disposition verticale
-        absencesRecyclerView.setAdapter(adapter); // lien avec la vue
-
-        // adaptateur pour afficher les notes et gerer la reclamation
+        // Notes list with complaint dialog
         noteAdapter = new StudentNoteAdapter(noteList, this::showComplaintDialog);
-        notesRecyclerView.setLayoutManager(new LinearLayoutManager(this)); // orientation verticale
-        notesRecyclerView.setAdapter(noteAdapter); // liaison de l'adaptateur
+        notesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        notesRecyclerView.setAdapter(noteAdapter);
 
-        // navigation vers l'activité listant toutes les notes
+        // Navigate to full grades
         View.OnClickListener openAll = v ->
                 startActivity(new Intent(this, StudentGradesActivity.class));
         tvViewAllGrades.setOnClickListener(openAll);
         btnViewGrades.setOnClickListener(openAll);
 
+        // Load data
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             String uid = currentUser.getUid();
             loadUserData(uid);
             loadAbsences(uid);
-            loadAverageGrade(uid); // calcul de la moyenne
-            loadNotes(uid); // chargement des notes detaillees
+            loadAverageGrade(uid);
+            loadNotes(uid);
         } else {
-            Toast.makeText(this, "Utilisateur non connecté." , Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Utilisateur non connecté.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    // Chargement de toutes les notes de l'etudiant
-    private void loadNotes(String uid) {
-        db.collection("users").document(uid).collection("notes").get()
-                .addOnSuccessListener(q -> {
-                    noteList.clear(); // on vide la liste courante
-                    for (DocumentSnapshot doc : q.getDocuments()) {
-                        Note n = doc.toObject(Note.class); // conversion du document
-                        if (n != null) {
-                            n.setDocumentPath(doc.getReference().getPath()); // garder le chemin pour la plainte
-                            noteList.add(n); // ajout a la liste
-                        }
-                    }
-                    noteAdapter.updateNotes(noteList); // mise a jour de l'affichage
-                })
-                .addOnFailureListener(e -> Toast.makeText(this , "Erreur de chargement des notes : " + e.getMessage() , Toast.LENGTH_SHORT).show());
-    }
+    // … loadNotes, loadAbsences, loadAverageGrade, loadUserData, updateUI, logout() stay unchanged …
 
-    // Affichage d'une boite de dialogue pour envoyer une plainte
+    /** Show dialog to enter complaint message */
     private void showComplaintDialog(Note note) {
-        // zone de texte pour saisir le message
         final android.widget.EditText input = new android.widget.EditText(this);
         new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Plainte")
-                .setMessage("Expliquez votre reclamation")
+                .setTitle("Réclamation")
+                .setMessage("Expliquez votre réclamation")
                 .setView(input)
                 .setPositiveButton("Envoyer", (d, w) -> {
                     String message = input.getText().toString().trim();
-                    sendComplaint(note, message); // envoi vers Firestore
+                    sendComplaint(note, message);
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 
-    // Envoi de la plainte dans Firestore
-    private void sendComplaint(Note note, String message) {
+    /** Build a Complaint object and save it in the root-level 'complaints' collection */
+    private void sendComplaint(Note note, String description) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) return; // securite
+        if (user == null) return;
 
-        java.util.Map<String, Object> data = new java.util.HashMap<>();
-        data.put("notePath", note.getDocumentPath()); // identifiant de la note
-        data.put("professeurId", note.getProfesseurId()); // prof concerne
-        data.put("message", message); // contenu de la plainte
-        data.put("timestamp", com.google.firebase.Timestamp.now()); // date
-        data.put("status", "pending");
+        Complaint complaint = new Complaint(
+                user.getUid(),              // studentId
+                note.getProfesseurId(),     // teacherId
+                note.getMatiere(),        // subjectId
+                note.getDocumentPath(),     // noteId
+                note.getNoteGenerale(),            // initialGrade (double)
+                note.getNoteGenerale(),            // modifiedGrade (double)
+                "Réclamation sur la note",  // title
+                description,                // description
+                "",                         // response (empty until teacher acts)
+                "pending",                  // status
+                Timestamp.now(),            // dateFiled
+                null                        // dateProcessed
+        );
 
-        db.collection("users").document(user.getUid())
-                .collection("plaintes")
-                .add(data)
-                .addOnSuccessListener(r -> Toast.makeText(this , "Plainte envoyee" , Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(this , "Erreur : " + e.getMessage() , Toast.LENGTH_SHORT).show());
+        db.collection("complaints")
+                .add(complaint)
+                .addOnSuccessListener(r ->
+                        Toast.makeText(this, "Réclamation envoyée", Toast.LENGTH_SHORT).show()
+                )
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Erreur : " + e.getMessage(), Toast.LENGTH_LONG).show()
+                );
 
-        notifyTeacher(note.getProfesseurId(), message);
+        // Optional: still notifying teacher by email
+        notifyTeacher(note.getProfesseurId(), description);
     }
 
+    /** Email-notify the teacher off the main thread */
     private void notifyTeacher(String profId, String message) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        String nom= currentUser.getDisplayName();
-        FirebaseFirestore.getInstance().collection("users").document(profId)
+        String studentName = currentUser != null ? currentUser.getDisplayName() : "Étudiant";
+        db.collection("users").document(profId)
                 .get()
                 .addOnSuccessListener(doc -> {
                     String email = doc.getString("email");
-
-                    // si il n'y avait pas d'email la fonction ne sera pas executee pour des raisons de securite
                     if (email == null || email.isEmpty()) return;
-                    //sinon
-                    else {
 
-                        // wherever you currently call sendEmail():
-                        new Thread(() -> {
-                            try {
-                                EmailSender.sendEmail(email , "Nouvelle reclamation reçu", "Bonjour cher Professeur, \n " +
-                                        "l'etudiant " + nom  +
-                                        " vous a envoye une reclamation concernant sa note. \n le message et le suivant " +message);
-                            } catch (Exception e) {
-                                Log.e("Email", "failed to send", e);
-                            }
-                        }).start();
-
-                    }
-
+                    // Send email in a background thread
+                    new Thread(() -> {
+                        try {
+                            EmailSender.sendEmail(
+                                    email,
+                                    "Nouvelle réclamation reçue",
+                                    "Bonjour,\nL'étudiant " + studentName +
+                                            " a envoyé une réclamation :\n\n" + message
+                            );
+                        } catch (MessagingException e) {
+                            Log.e("Email", "failed to send", e);
+                        }
+                    }).start();
                 })
-                .addOnFailureListener(e -> Log.e("notifyTeacher", "Impossible de récupérer l'email du prof", e));
+                .addOnFailureListener(e ->
+                        Log.e("notifyTeacher", "Impossible de récupérer l'email du prof", e)
+                );
     }
 
-
+    // … other existing methods (loadAverageGrade, loadUserData, etc.) …
+    /** Charge toutes les notes de l'étudiant */
+    private void loadNotes(String uid) {
+        db.collection("users").document(uid).collection("notes")
+                .get()
+                .addOnSuccessListener(query -> {
+                    noteList.clear();
+                    for (DocumentSnapshot doc : query.getDocuments()) {
+                        Note n = doc.toObject(Note.class);
+                        if (n != null) {
+                            n.setDocumentPath(doc.getReference().getPath());
+                            noteList.add(n);
+                        }
+                    }
+                    noteAdapter.updateNotes(noteList);
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this,
+                                "Erreur chargement notes : " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show()
+                );
+    }
+    /** Calcule et affiche la moyenne générale */
     private void loadAverageGrade(String uid) {
-        db.collection("users").document(uid).collection("notes").get()
+        db.collection("users").document(uid).collection("notes")
+                .get()
                 .addOnSuccessListener(query -> {
                     double total = 0;
                     int count = 0;
@@ -194,23 +216,35 @@ public class StudentDashboard extends AppCompatActivity {
                         }
                     }
                     if (count > 0) {
-                        double average = total / count;
-                        tvOverallGrade.setText(String.format(Locale.FRANCE, "%.2f/20", average));
+                        double avg = total / count;
+                        tvOverallGrade.setText(String.format(Locale.FRANCE, "%.2f/20", avg));
                     } else {
                         tvOverallGrade.setText("--/20");
                     }
                 })
-                .addOnFailureListener(e -> Toast.makeText(this , "Erreur de chargement des notes : " + e.getMessage() , Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e ->
+                        Toast.makeText(this,
+                                "Erreur chargement moyenne : " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show()
+                );
     }
 
+    /** Charge les données de l'utilisateur et met à jour l'UI */
     private void loadUserData(String uid) {
-        db.collection("users").document(uid).get()
+        db.collection("users").document(uid)
+                .get()
                 .addOnSuccessListener(this::updateUI)
-                .addOnFailureListener(e -> Toast.makeText(this , "Erreur de chargement utilisateur : " + e.getMessage() , Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e ->
+                        Toast.makeText(this,
+                                "Erreur chargement utilisateur : " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show()
+                );
     }
 
+    /** Charge et compte les absences */
     private void loadAbsences(String uid) {
-        db.collection("users").document(uid).collection("abscence").get()
+        db.collection("users").document(uid).collection("abscence")
+                .get()
                 .addOnSuccessListener(query -> {
                     absencesCountText.setText("Nombre d'absences : " + query.size());
                     absenceList.clear();
@@ -223,33 +257,43 @@ public class StudentDashboard extends AppCompatActivity {
                     }
                     adapter.notifyDataSetChanged();
                 })
-                .addOnFailureListener(e -> Toast.makeText(this , "Erreur de chargement des absences : " + e.getMessage() , Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e ->
+                        Toast.makeText(this,
+                                "Erreur chargement absences : " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show()
+                );
     }
 
+    /** Met à jour les TextViews avec les données user */
     private void updateUI(DocumentSnapshot doc) {
         if (!doc.exists()) {
-            Toast.makeText(this, "Données utilisateur non trouvées." , Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,
+                    "Données utilisateur non trouvées.",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String nom = getSafe(doc, "nom");
-        String prenom = getSafe(doc, "prenom");
-        String filiere = getSafe(doc, "filiere");
-        String matricule = getSafe(doc, "matricule");
-        String niveau = getSafe(doc, "niveau");
-        String classe = getSafe(doc, "classe");
+        String nom      = getSafe(doc, "nom");
+        String prenom   = getSafe(doc, "prenom");
+        String filiere  = getSafe(doc, "filiere");
+        String matricule= getSafe(doc, "matricule");
+        String niveau   = getSafe(doc, "niveau");
+        String classe   = getSafe(doc, "classe");
 
-        tvName.setText(nom + " " + prenom);
-        tvFiliere.setText(filiere);
+        tvName    .setText(nom + " " + prenom);
+        tvFiliere .setText(filiere);
         tvMatricule.setText(matricule);
-        tvClasse.setText(niveau + " " + filiere + " " + classe);
+        tvClasse  .setText(niveau + " " + filiere + " " + classe);
     }
 
+    /** Récupère un champ de DocumentSnapshot en sûr */
     private String getSafe(DocumentSnapshot doc, String key) {
         Object val = doc.get(key);
-        return val != null ? val.toString() : "";
+        return (val != null) ? val.toString() : "";
     }
-    private void logout(){
+
+    /** Déconnecte l'utilisateur et retourne à l'écran de login */
+    private void logout() {
         FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(this, StudentActivity.class));
         finish();
