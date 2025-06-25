@@ -327,23 +327,6 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnReclamation"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:text="Complaints"
-                    android:textSize="12dp"
-                    android:textAllCaps="false"
-                    android:textStyle="bold"
-                    app:strokeColor="@color/primary_light"
-                    android:textColor="@color/primary_light"
-                    android:layout_marginEnd="6dp"
-                    app:cornerRadius="12dp"
-                    app:icon="@drawable/ic_complaint"
-                    app:iconTint="@color/primary_light"
-                    style="@style/Widget.Material3.Button.OutlinedButton" />
-
-                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnLogout"
                     android:layout_width="0dp"
                     android:layout_height="56dp"
@@ -353,7 +336,6 @@
                     android:textStyle="bold"
                     app:strokeColor="@color/error_color"
                     android:textColor="@color/error_color"
-                    android:layout_marginStart="6dp"
                     app:cornerRadius="12dp"
                     app:icon="@drawable/ic_logout"
                     app:iconTint="@color/error_color"

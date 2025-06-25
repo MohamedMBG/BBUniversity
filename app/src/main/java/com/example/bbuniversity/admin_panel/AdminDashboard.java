@@ -30,7 +30,7 @@ public class AdminDashboard extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private NoteAdapter noteAdapter;
-    private TextView textTotalStudents, textTotalTeachers;
+    private TextView textTotalStudents, textTotalTeachers, textTotalAbsences;
     private CardView manageTeachers,manageStudents;
 
     @SuppressLint("MissingInflatedId")
@@ -50,7 +50,17 @@ public class AdminDashboard extends AppCompatActivity {
         setupButtons();
         loadDashboardData();
     }
-
+    private void loadTotalAbsences() {
+        db.collectionGroup("abscence").get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        textTotalAbsences.setText(String.valueOf(task.getResult().size()));
+                    } else {
+                        textTotalAbsences.setText("Error");
+                        Log.e("AbsenceCount", "Error", task.getException());
+                    }
+                });
+    }
     private void setupUI() {
         RecyclerView recyclerViewNotes = findViewById(R.id.recyclerViewNotes);
         recyclerViewNotes.setLayoutManager(new LinearLayoutManager(this));
@@ -62,11 +72,12 @@ public class AdminDashboard extends AppCompatActivity {
 
         manageTeachers = findViewById(R.id.ManageTeahcers);
         manageStudents = findViewById(R.id.ManageStudents);
+        textTotalAbsences = findViewById(R.id.textTotalAbsences);
+
     }
 
     private void setupButtons() {
         findViewById(R.id.fabAddStudent).setOnClickListener(v -> launch(CreateStudentActivity.class));
-        findViewById(R.id.fabAddNote).setOnClickListener(v -> launch(AddNoteActivity.class));
         findViewById(R.id.fabAddTeacher).setOnClickListener(v -> launch(CreateProfessorActivity.class));
 
         manageStudents.setOnClickListener(view -> launch(ManageStudentsActivity.class));
@@ -85,6 +96,8 @@ public class AdminDashboard extends AppCompatActivity {
         loadAbsenceStats();
         loadCount("student", R.id.textTotalStudents);
         loadCount("professor", R.id.textTotalTeachers);
+        loadTotalAbsences();
+
     }
 
     private void loadCount(String role, int textViewId) {

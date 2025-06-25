@@ -6,9 +6,19 @@
     android:background="@color/white">
 
     <LinearLayout
+        android:layout_marginTop="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Emploi du temps"
+            android:textColor="@color/black"
+            android:fontFamily="@font/montserrat_bold"
+            android:textSize="24sp"
+            android:layout_marginBottom="60dp"/>
 
         <Spinner
             android:id="@+id/spinnerClass"
@@ -47,6 +57,7 @@
             android:id="@+id/btnAddEntry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/accent_gold_dark"
             android:text="Ajouter"/>
 
         <ListView
@@ -59,6 +70,8 @@
             android:id="@+id/btnSaveTimetable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/accent_gold_dark"
+
             android:layout_marginTop="16dp"
             android:text="Enregistrer"/>
     </LinearLayout>

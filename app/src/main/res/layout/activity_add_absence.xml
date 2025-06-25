@@ -6,10 +6,20 @@
     android:background="@color/white">
 
     <LinearLayout
+        android:layout_marginTop="40dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Absence"
+            android:textColor="@color/text_primary"
+            android:textSize="24sp"
+            android:fontFamily="@font/montserrat_bold"
+            android:layout_marginBottom="30dp" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
