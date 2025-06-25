@@ -2,6 +2,7 @@ package com.example.bbuniversity.teacher;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -35,6 +36,7 @@ public class TeacherDashboard extends AppCompatActivity implements ClassAdapter.
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_teacher_dashboard);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         tvWelcome = findViewById(R.id.tvWelcome);
         rvNextClasses = findViewById(R.id.rvNextClasses);

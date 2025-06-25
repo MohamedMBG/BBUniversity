@@ -67,6 +67,10 @@ public class StudentDashboard extends AppCompatActivity {
         tvViewAllGrades      = findViewById(R.id.tvViewAllGrades);
         Button btnViewGrades = findViewById(R.id.btnViewGrades);
         Button btnLogout     = findViewById(R.id.btnLogout);
+        Button btnViewAbsences = findViewById(R.id.btnViewAbsences);
+
+        //absences
+        btnViewAbsences.setOnClickListener(v -> startActivity(new Intent(this, StudentAbsencesActivity.class)));
 
         // Logout
         btnLogout.setOnClickListener(v -> logout());
