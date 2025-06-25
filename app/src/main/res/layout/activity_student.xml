@@ -46,7 +46,7 @@
             android:layout_gravity="center"
             app:boxStrokeColor="@color/black"
             android:layout_marginTop="20dp"
-            android:hint="Username"
+            android:hint="Email"
             android:textColorHint="#242424"
             app:hintTextColor="#242424">
 
@@ -95,7 +95,7 @@
             android:layout_marginTop="10dp"
             android:layout_gravity="start"
             android:fontFamily="@font/montserrat_medium"
-            android:text="Get in touch with the administration"
+            android:text="Forgot password ?"
             android:textSize="10sp" />
 
         <!-- Connect Button -->

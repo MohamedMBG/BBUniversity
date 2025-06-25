@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bbuniversity.R;
+import com.example.bbuniversity.TimetableViewActivity;
 import com.example.bbuniversity.adapters.ClassAdapter;
 import com.example.bbuniversity.admin_panel.AddNoteActivity;
 import com.example.bbuniversity.models.ClassInfo;
@@ -50,6 +51,13 @@ public class TeacherDashboard extends AppCompatActivity implements ClassAdapter.
                 startActivity(new Intent(this, AddNoteActivity.class)));
         findViewById(R.id.btnAllClasses).setOnClickListener(v ->
                 startActivity(new Intent(this, TeacherClassesActivity.class)));
+        findViewById(R.id.btnTeacherTimetable).setOnClickListener(v -> {
+            Intent i = new Intent(this, TimetableViewActivity.class);
+            // Pour l'instant, on affiche la première classe de la liste
+            if (!classInfos.isEmpty())
+                i.putExtra("class", classInfos.get(0).getClassName());
+            startActivity(i);
+        });
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {

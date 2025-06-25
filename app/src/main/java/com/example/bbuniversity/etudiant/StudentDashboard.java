@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bbuniversity.EmailSender;
 import com.example.bbuniversity.R;
+import com.example.bbuniversity.TimetableViewActivity;
 import com.example.bbuniversity.adapters.AbsenceAdapter;
 import com.example.bbuniversity.adapters.StudentNoteAdapter;
 import com.example.bbuniversity.models.Abscence;
@@ -68,6 +69,13 @@ public class StudentDashboard extends AppCompatActivity {
         Button btnViewGrades = findViewById(R.id.btnViewGrades);
         Button btnLogout     = findViewById(R.id.btnLogout);
         Button btnViewAbsences = findViewById(R.id.btnViewAbsences);
+        Button btnTimetable  = findViewById(R.id.btnTimetable);
+
+        btnTimetable.setOnClickListener(v -> {
+            Intent i = new Intent(this, TimetableViewActivity.class);
+            i.putExtra("class", tvClasse.getText().toString());
+            startActivity(i);
+        });
 
         //absences
         btnViewAbsences.setOnClickListener(v -> startActivity(new Intent(this, StudentAbsencesActivity.class)));

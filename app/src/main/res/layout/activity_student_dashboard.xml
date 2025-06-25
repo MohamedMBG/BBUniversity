@@ -303,6 +303,27 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTimetable"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Emploi du temps"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:backgroundTint="@color/primary_light"
+                    android:textColor="@color/white"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_calendar"
+                    app:iconTint="@color/white" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton

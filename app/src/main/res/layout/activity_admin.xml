@@ -87,7 +87,7 @@
             android:layout_gravity="start"
             android:layout_marginTop="8dp"
             android:fontFamily="@font/montserrat_medium"
-            android:text="Need help? Contact administration"
+            android:text="Forgot password ?"
             android:textColor="#888888"
             android:textSize="12sp" />
 
