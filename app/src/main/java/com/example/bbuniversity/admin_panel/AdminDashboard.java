@@ -84,6 +84,8 @@ public class AdminDashboard extends AppCompatActivity {
         manageTeachers.setOnClickListener(view -> launch(ManageProfessorsActivity.class));
         findViewById(R.id.fabAddAbsence).setOnClickListener(v -> launch(AddAbsenceActivity.class));
         findViewById(R.id.btnAdminTimetable).setOnClickListener(v -> launch(TimetableAdminActivity.class));
+        findViewById(R.id.btnAddClass).setOnClickListener(v -> launch(CreateClassActivity.class));
+        findViewById(R.id.btnAddSubject).setOnClickListener(v -> launch(CreateSubjectActivity.class));
 
     }
 
