@@ -53,9 +53,10 @@ public class TeacherDashboard extends AppCompatActivity implements ClassAdapter.
                 startActivity(new Intent(this, TeacherClassesActivity.class)));
         findViewById(R.id.btnTeacherTimetable).setOnClickListener(v -> {
             Intent i = new Intent(this, TimetableViewActivity.class);
-            // Pour l'instant, on affiche la première classe de la liste
-            if (!classInfos.isEmpty())
-                i.putExtra("class", classInfos.get(0).getClassName());
+            FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
+            if (current != null) {
+                i.putExtra("teacherId", current.getUid());
+            }
             startActivity(i);
         });
 
