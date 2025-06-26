@@ -1,9 +1,11 @@
 package com.example.bbuniversity.etudiant;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -19,10 +21,12 @@ public class StudentActivity extends AppCompatActivity {
 
     private TextInputEditText etUsername, etPassword;
     private Button connectBtn, back;
+    private TextView forgotPassword;
 
     private FirebaseAuth auth;
     private FirebaseFirestore db;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,11 +37,15 @@ public class StudentActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         connectBtn = findViewById(R.id.connect_btn);
         back = findViewById(R.id.back);
+        forgotPassword = findViewById(R.id.tvForgotPassword);
 
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         back.setOnClickListener(v -> finish());
+
+        forgotPassword.setOnClickListener(v ->
+                startActivity(new Intent(this, com.example.bbuniversity.ForgotPasswordActivity.class)));
 
         connectBtn.setOnClickListener(v -> {
             String email = etUsername.getText().toString().trim();

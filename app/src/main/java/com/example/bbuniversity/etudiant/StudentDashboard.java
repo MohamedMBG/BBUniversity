@@ -38,6 +38,7 @@ public class StudentDashboard extends AppCompatActivity {
     private TextView tvName, tvFiliere, tvMatricule, tvClasse,
             absencesCountText, tvOverallGrade, tvViewAllGrades;
     private RecyclerView absencesRecyclerView, notesRecyclerView;
+    private String studentClassName = "";
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final List<Abscence> absenceList = new ArrayList<>();
@@ -73,7 +74,8 @@ public class StudentDashboard extends AppCompatActivity {
 
         btnTimetable.setOnClickListener(v -> {
             Intent i = new Intent(this, TimetableViewActivity.class);
-            i.putExtra("class", tvClasse.getText().toString());
+//            i.putExtra("class", tvClasse.getText().toString());
+            i.putExtra("class", studentClassName);
             startActivity(i);
         });
 
@@ -291,6 +293,9 @@ public class StudentDashboard extends AppCompatActivity {
         String matricule= getSafe(doc, "matricule");
         String niveau   = getSafe(doc, "niveau");
         String classe   = getSafe(doc, "classe");
+
+        // Retenir le nom réel de la classe pour charger l'emploi du temps
+        studentClassName = classe;
 
         tvName    .setText(nom + " " + prenom);
         tvFiliere .setText(filiere);
