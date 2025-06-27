@@ -3,6 +3,8 @@ package com.example.bbuniversity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,6 +13,7 @@ import com.example.bbuniversity.models.TimetableEntry;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,28 +29,34 @@ public class TimetableViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_timetable_view);
 
         ListView list = findViewById(R.id.listTimetable);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1,
-                new ArrayList<>());
+        List<Map<String, String>> dataSet = new ArrayList<>();
+        SimpleAdapter adapter = new SimpleAdapter(
+                this,
+                dataSet,
+                android.R.layout.simple_list_item_2,
+                new String[]{"line1", "line2"},
+                new int[]{android.R.id.text1, android.R.id.text2}
+        );
         list.setAdapter(adapter);
 
         String className = getIntent().getStringExtra("class");
-            String teacherId = getIntent().getStringExtra("teacherId");
+        String teacherId = getIntent().getStringExtra("teacherId");
 
-            if (className == null && teacherId == null) {
-                finish();
-                return;
-            }
-
-            if (className != null) {
-                loadClassTimetable(className, adapter);
-            }
-
-            if (teacherId != null) {
-                loadTeacherTimetable(teacherId, adapter);
-            }
+        if (className == null && teacherId == null) {
+            finish();
+            return;
         }
-    private void loadClassTimetable(String className, ArrayAdapter<String> adapter) {
+
+        if (className != null) {
+            loadClassTimetable(className, dataSet, adapter);
+        }
+
+        if (teacherId != null) {
+            loadTeacherTimetable(teacherId, dataSet, adapter);
+        }
+    }
+
+    private void loadClassTimetable(String className, List<Map<String, String>> dataSet, SimpleAdapter adapter) {
         FirebaseFirestore.getInstance()
                 .collection("timetables")
                 .document(className)
@@ -57,14 +66,18 @@ public class TimetableViewActivity extends AppCompatActivity {
                         List<Map<String, String>> data = (List<Map<String, String>>) doc.get("entries");
                         if (data != null) {
                             for (Map<String, String> m : data) {
-                                adapter.add(m.get("day") + " - " + m.get("subject") + " " + m.get("start") + "-" + m.get("end"));
+                                Map<String, String> row = new HashMap<>();
+                                row.put("line1", m.get("day") + " " + m.get("start") + "-" + m.get("end"));
+                                row.put("line2", m.get("subject"));
+                                dataSet.add(row);
                             }
+                            adapter.notifyDataSetChanged();
                         }
                     }
                 });
     }
     /** Charge et agrège l'emploi du temps d'un professeur */
-    private void loadTeacherTimetable(String teacherId, ArrayAdapter<String> adapter) {
+    private void loadTeacherTimetable(String teacherId, List<Map<String, String>> dataSet, SimpleAdapter adapter) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users").document(teacherId).get()
                 .addOnSuccessListener(doc -> {
@@ -84,10 +97,13 @@ public class TimetableViewActivity extends AppCompatActivity {
                                         for (Map<String, String> m : data) {
                                             String entrySubject = m.get("subject");
                                             if (entrySubject != null && entrySubject.equalsIgnoreCase(subject)) {
-                                                String line = m.get("day") + " - " + c + " - " + entrySubject + " " + m.get("start") + "-" + m.get("end");
-                                                adapter.add(line);
+                                                Map<String, String> row = new HashMap<>();
+                                                row.put("line1", m.get("day") + " " + m.get("start") + "-" + m.get("end"));
+                                                row.put("line2", c + " - " + entrySubject);
+                                                dataSet.add(row);
                                             }
                                         }
+                                        adapter.notifyDataSetChanged();
                                     });
                         }
                     }
