@@ -1,57 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#FFFFFF"
-    android:elevation="2dp">
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="6dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
 
-    <!-- Nom complet -->
-    <TextView
-        android:id="@+id/tvFullName"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nom Prénom"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:textColor="#000000" />
+        android:orientation="horizontal"
+        android:padding="20dp">
 
-    <!-- Email -->
-    <TextView
-        android:id="@+id/tvEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Email: example@gmail.com"
-        android:textColor="#444444"
-        android:layout_marginTop="4dp" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-    <!-- Adresse -->
-    <TextView
-        android:id="@+id/tvAdresse"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Adresse: Rabat"
-        android:textColor="#444444"
-        android:layout_marginTop="2dp" />
+            <TextView
+                android:id="@+id/tvFullName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
 
-    <!-- Département -->
-    <TextView
-        android:id="@+id/tvDepartement"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Département: 55"
-        android:textColor="#444444"
-        android:layout_marginTop="2dp" />
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/text_secondary" />
 
-    <!-- Matières -->
-    <TextView
-        android:id="@+id/tvMatieres"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Matières :"
-        android:textColor="#444444"
-        android:layout_marginTop="4dp" />
+            <TextView
+                android:id="@+id/tvAdresse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/text_secondary" />
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/tvDepartement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/text_secondary" />
+
+            <TextView
+                android:id="@+id/tvMatieres"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/text_secondary" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/circle_background"
+                android:backgroundTint="@color/background_secondary" />
+
+            <ImageView
+                android:id="@+id/editButton"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_edit"
+                app:tint="@color/primary_medium"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="Edit teacher" />
+        </FrameLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

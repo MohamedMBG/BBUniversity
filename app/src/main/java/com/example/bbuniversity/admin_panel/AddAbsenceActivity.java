@@ -2,9 +2,11 @@ package com.example.bbuniversity.admin_panel;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bbuniversity.R;
@@ -13,6 +15,7 @@ import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.ParseException;
@@ -24,7 +27,8 @@ import java.util.Map;
 
 public class AddAbsenceActivity extends AppCompatActivity {
 
-    private TextInputEditText etStudentEmail, etMatiere, etDate;
+    private TextInputEditText etStudentEmail, etDate;
+    private TextInputEditText etMatiere;
     private MaterialCheckBox cbJustified;
     private FirebaseFirestore db;
 
@@ -44,8 +48,33 @@ public class AddAbsenceActivity extends AppCompatActivity {
         MaterialButton btnAdd = findViewById(R.id.btnAddAbsence);
         MaterialButton btnCancel = findViewById(R.id.btnCancel);
 
+        etMatiere.setFocusable(false);
+        etMatiere.setOnClickListener(v -> showSubjectDialog());
+
         btnAdd.setOnClickListener(v -> addAbsence());
         btnCancel.setOnClickListener(v -> finish());
+    }
+
+    private void showSubjectDialog() {
+        db.collection("matieres").get()
+                .addOnSuccessListener(snapshot -> {
+                    java.util.List<String> subjects = new java.util.ArrayList<>();
+                    for (DocumentSnapshot doc : snapshot.getDocuments()) {
+                        String nom = doc.getString("nom");
+                        if (nom != null) subjects.add(nom);
+                    }
+                    if (subjects.isEmpty()) {
+                        Toast.makeText(this, "Aucune matière trouvée", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String[] array = subjects.toArray(new String[0]);
+                    new AlertDialog.Builder(this)
+                            .setTitle("Sélectionner la matière")
+                            .setItems(array, (d, which) -> etMatiere.setText(array[which]))
+                            .show();
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Erreur: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void addAbsence() {

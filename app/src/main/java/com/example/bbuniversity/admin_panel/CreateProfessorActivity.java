@@ -20,6 +20,8 @@ public class CreateProfessorActivity extends AppCompatActivity {
     private TextInputEditText etNom, etPrenom, etEmail, etPassword, etAdresse, etDepartement;
     private AutoCompleteTextView autoMatiere;
     private Button btnCreate, btnCancel, btnAssocierClasses;
+    private String teacherId;
+
 
     // Listes pour toutes les classes Firestore et celles sélectionnées par l'utilisateur
     private final List<String> allClasses = new ArrayList<>();
@@ -31,9 +33,7 @@ public class CreateProfessorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_professor);
         EdgeToEdge.enable(this);
 
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        );
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         // Lier les vues avec leurs IDs
         etNom = findViewById(R.id.etNom);
@@ -49,6 +49,7 @@ public class CreateProfessorActivity extends AppCompatActivity {
 
         // Afficher la liste déroulante des matières
         autoMatiere.setOnClickListener(v -> autoMatiere.showDropDown());
+        teacherId = getIntent().getStringExtra("teacherId");
 
         // Charger les matières depuis Firestore
         FirebaseFirestore.getInstance().collection("matieres").get()
@@ -63,6 +64,15 @@ public class CreateProfessorActivity extends AppCompatActivity {
 
         // Boutons
         btnCreate.setOnClickListener(v -> createProfessor());
+        if (teacherId != null) {
+            etEmail.setEnabled(false);
+            etPassword.setVisibility(View.GONE);
+            btnCreate.setText("Mettre à jour");
+            loadTeacherData();
+            btnCreate.setOnClickListener(v -> updateProfessor());
+        } else {
+            btnCreate.setOnClickListener(v -> createProfessor());
+        }
         btnCancel.setOnClickListener(v -> finish());
         btnAssocierClasses.setOnClickListener(v -> showClassDialog());
     }
@@ -130,5 +140,47 @@ public class CreateProfessorActivity extends AppCompatActivity {
                             .addOnFailureListener(e -> Toast.makeText(this, "Erreur Firestore", Toast.LENGTH_SHORT).show());
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "Erreur Auth", Toast.LENGTH_SHORT).show());
+    }
+    private void loadTeacherData() {
+        FirebaseFirestore.getInstance().collection("users").document(teacherId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        Professeur p = doc.toObject(Professeur.class);
+                        if (p != null) {
+                            etNom.setText(p.getNom());
+                            etPrenom.setText(p.getPrenom());
+                            etEmail.setText(p.getEmail());
+                            etAdresse.setText(p.getAdresse());
+                            etDepartement.setText(p.getDepartement());
+                        }
+                    }
+                });
+    }
+    private void updateProfessor() {
+        String nom = etNom.getText().toString().trim();
+        String prenom = etPrenom.getText().toString().trim();
+        String adresse = etAdresse.getText().toString().trim();
+        String dep = etDepartement.getText().toString().trim();
+        String matiere = autoMatiere.getText().toString().trim();
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("nom", nom);
+        updates.put("prenom", prenom);
+        updates.put("adresse", adresse);
+        updates.put("departement", dep);
+        if (!matiere.isEmpty()) {
+            Map<String, List<String>> enseignement = new HashMap<>();
+            enseignement.put(matiere, new ArrayList<>(selectedClasses));
+            updates.put("enseignement", enseignement);
+        }
+
+        FirebaseFirestore.getInstance().collection("users").document(teacherId)
+                .update(updates)
+                .addOnSuccessListener(r -> {
+                    Toast.makeText(this, "Professeur mis \u00E0 jour", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Erreur Firestore", Toast.LENGTH_SHORT).show());
     }
 }

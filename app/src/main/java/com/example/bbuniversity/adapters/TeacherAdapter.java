@@ -3,6 +3,7 @@ package com.example.bbuniversity.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,10 +16,15 @@ import java.util.List;
 
 public class TeacherAdapter extends RecyclerView.Adapter<TeacherAdapter.TeacherViewHolder> {
 
-    private List<Professeur> profs; // Liste des professeurs
+    public interface OnTeacherClickListener {
+        void onTeacherClick(Professeur teacher);
+    }
 
-    public TeacherAdapter(List<Professeur> profs) {
+    private List<Professeur> profs; // Liste des professeurs
+    private final OnTeacherClickListener listener;
+    public TeacherAdapter(List<Professeur> profs, OnTeacherClickListener listener) {
         this.profs = profs;
+        this.listener = listener;
     }
 
     @NonNull
@@ -51,6 +57,8 @@ public class TeacherAdapter extends RecyclerView.Adapter<TeacherAdapter.TeacherV
         }
 
         holder.tvMatieres.setText(matieres.toString().trim());
+
+        holder.bind(prof, listener);
     }
 
     @Override
@@ -61,6 +69,7 @@ public class TeacherAdapter extends RecyclerView.Adapter<TeacherAdapter.TeacherV
     // Classe interne qui représente chaque case dans la liste
     static class TeacherViewHolder extends RecyclerView.ViewHolder {
         TextView tvFullName, tvEmail, tvAdresse, tvDepartement, tvMatieres;
+        ImageView editButton;
 
         public TeacherViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -69,6 +78,18 @@ public class TeacherAdapter extends RecyclerView.Adapter<TeacherAdapter.TeacherV
             tvAdresse = itemView.findViewById(R.id.tvAdresse);
             tvDepartement = itemView.findViewById(R.id.tvDepartement);
             tvMatieres = itemView.findViewById(R.id.tvMatieres);
+            editButton = itemView.findViewById(R.id.editButton);
+        }
+
+        public void bind(Professeur prof, OnTeacherClickListener l) {
+            itemView.setOnClickListener(v -> {
+                if (l != null) l.onTeacherClick(prof);
+            });
+            if (editButton != null) {
+                editButton.setOnClickListener(v -> {
+                    if (l != null) l.onTeacherClick(prof);
+                });
+            }
         }
     }
 }

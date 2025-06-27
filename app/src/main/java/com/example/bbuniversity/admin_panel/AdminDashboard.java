@@ -118,7 +118,7 @@ public class AdminDashboard extends AppCompatActivity {
     private void loadNotes() {
         db.collectionGroup("notes")
                 .orderBy("derniereMiseAJour", Query.Direction.DESCENDING)
-                .limit(50).get()
+                .limit(3).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         List<Note> notes = new ArrayList<>();
