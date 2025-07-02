@@ -16,8 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bbuniversity.R;
 import com.example.bbuniversity.adapters.NoteAdapter;
+import com.example.bbuniversity.etudiant.StudentActivity;
 import com.example.bbuniversity.models.Note;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -49,6 +51,7 @@ public class AdminDashboard extends AppCompatActivity {
         setupUI();
         setupButtons();
         loadDashboardData();
+        logout();
     }
     private void loadTotalAbsences() {
         db.collectionGroup("abscence").get()
@@ -162,6 +165,14 @@ public class AdminDashboard extends AppCompatActivity {
             }
         }
         Toast.makeText(this, "Error " + action + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
+    }
+    private void logout() {
+        findViewById(R.id.btnLogout).setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(this, AdminActivity.class));
+            finish();
+        });
+
     }
 
     @Override

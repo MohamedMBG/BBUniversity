@@ -59,6 +59,8 @@ public class ManageProfessorsActivity extends AppCompatActivity implements Teach
         teachersRv.setAdapter(adapter);
 
         fetchProfessors();
+        //activation de la barre de recherche :
+        setupSearch();
     }
 
     private void setupSearch() {

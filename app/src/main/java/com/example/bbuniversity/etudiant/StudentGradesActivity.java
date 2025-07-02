@@ -85,78 +85,50 @@ public class StudentGradesActivity extends AppCompatActivity {
                         Toast.makeText(this, "Erreur de chargement des notes : " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
+
     /** Affiche une boîte de dialogue pour envoyer une plainte */
     private void showComplaintDialog(Note note) {
-        // field for the complaint text
         final android.widget.EditText input = new android.widget.EditText(this);
-        // build and display alert dialog
         new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Plainte")
-                .setMessage("Expliquez votre reclamation")
+                .setTitle("Réclamation")
+                .setMessage("Expliquez votre réclamation")
                 .setView(input)
-                .setPositiveButton("Envoyer", (d, w) -> {
-                    // send the complaint with entered text
+                .setPositiveButton("Envoyer", (dialog, which) -> {
                     String message = input.getText().toString().trim();
                     sendComplaint(note, message);
                 })
-                .setNegativeButton(android.R.string.cancel, null)
+                .setNegativeButton("Annuler", null)
                 .show();
     }
-
-    /** Build the complaint object and send it */
-    private void sendComplaint(Note note, String message) {
-        // get the current student
+    private void sendComplaint(Note note, String description) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        // abort if none
         if (user == null) return;
 
-        // create complaint object
         Complaint complaint = new Complaint(
-                user.getUid(),
-                note.getProfesseurId(),
-                note.getMatiere(),
-                note.getDocumentPath(),
-                note.getNoteGenerale(),
-                note.getNoteGenerale(),
-                "Réclamation de note",
-                message,
-                "",
-                "pending",
-                Timestamp.now(),
-                null
+                user.getUid(),                      // studentId
+                note.getProfesseurId(),            // teacherId
+                note.getMatiere(),                 // subjectId
+                note.getDocumentPath(),            // noteId
+                note.getNoteGenerale(),            // initialGrade
+                note.getNoteGenerale(),            // modifiedGrade
+                "Réclamation sur la note",         // title
+                description,                       // description
+                "",                                // response
+                "pending",                         // status
+                Timestamp.now(),                   // dateFiled
+                null                               // dateProcessed
         );
 
-        // save complaint
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("complaints")
                 .add(complaint)
                 .addOnSuccessListener(r ->
-                        Toast.makeText(this, "Réclamation envoyée", Toast.LENGTH_SHORT).show())
+                        Toast.makeText(this, "Réclamation envoyée", Toast.LENGTH_SHORT).show()
+                )
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Erreur d'envoi : " + e.getMessage(), Toast.LENGTH_LONG).show());
-
-        // email the teacher
-        notifyTeacher(note.getProfesseurId(), message);
+                        Toast.makeText(this, "Erreur : " + e.getMessage(), Toast.LENGTH_LONG).show()
+                );
     }
 
-    private void notifyTeacher(String profId, String message) {
-        // get teacher info to retrieve email
-        FirebaseFirestore.getInstance().collection("users").document(profId)
-                .get()
-                .addOnSuccessListener(doc -> {
-                    // teacher email address
-                    String email = doc.getString("email");
-                    if (email != null) {
-                        // create mail intent
-                        android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_SENDTO);
-                        intent.setData(android.net.Uri.parse("mailto:" + email));
-                        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "New grade complaint");
-                        intent.putExtra(android.content.Intent.EXTRA_TEXT, message);
-                        try {
-                            // open email application
-                            startActivity(intent);
-                        } catch (android.content.ActivityNotFoundException ignored) {
-                        }
-                    }
-                });
-    }
+
 }

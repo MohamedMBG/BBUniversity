@@ -29,6 +29,16 @@ public class TeacherComplaintsActivity extends AppCompatActivity {
     private final List<Complaint> complaints = new ArrayList<>();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    private final android.os.Handler handler = new android.os.Handler();
+    private final Runnable refreshRunnable = new Runnable() {
+        @Override
+        public void run() {
+            loadComplaints();  // recharge les données
+            handler.postDelayed(this, 3000);  // relance dans 3 secondes
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +95,17 @@ public class TeacherComplaintsActivity extends AppCompatActivity {
                             "Erreur lors du chargement : " + e.getMessage(),
                             Toast.LENGTH_LONG).show();
                 });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        handler.post(refreshRunnable);  // démarrage de la boucle
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        handler.removeCallbacks(refreshRunnable);  // arrêt de la boucle
     }
 
     private void openDetail(@NonNull Complaint complaint) {

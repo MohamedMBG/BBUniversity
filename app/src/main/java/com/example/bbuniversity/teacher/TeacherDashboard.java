@@ -14,6 +14,7 @@ import com.example.bbuniversity.R;
 import com.example.bbuniversity.TimetableViewActivity;
 import com.example.bbuniversity.adapters.ClassAdapter;
 import com.example.bbuniversity.admin_panel.AddNoteActivity;
+import com.example.bbuniversity.admin_panel.AdminActivity;
 import com.example.bbuniversity.models.ClassInfo;
 import com.example.bbuniversity.models.Professeur;
 import com.google.firebase.auth.FirebaseAuth;
@@ -64,6 +65,7 @@ public class TeacherDashboard extends AppCompatActivity implements ClassAdapter.
         if (user != null) {
             loadTeacherInfo(user.getUid());
         }
+        logout();
     }
 
     private void loadTeacherInfo(String uid) {
@@ -88,6 +90,15 @@ public class TeacherDashboard extends AppCompatActivity implements ClassAdapter.
             }
         }
         adapter.notifyDataSetChanged();
+    }
+
+    private void logout() {
+        findViewById(R.id.btnLogout).setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(this, AdminActivity.class));
+            finish();
+        });
+
     }
 
     @Override
